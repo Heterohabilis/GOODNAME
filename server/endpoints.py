@@ -19,6 +19,52 @@ ENDPOINT_RESP = 'Available endpoints'
 HELLO_EP = '/hello'
 HELLO_RESP = 'hello'
 
+# My ep and resp
+CRICETUS_EP = '/cricetus'
+CRICETUS_RESP = 'cybercricetus'
+
+# Journal Stuffs
+TITLE_EP = '/title'
+TITLE_RESP = 'Title'
+TITLE = 'Nostra Repositoria'
+EDITOR_RESP = 'Editor'
+EDITOR = 'Cybercricetus xm2204@nyu.edu'
+DATE_RESP = 'Date'
+DATE = '2024-10-01'
+
+
+# Journal Retrieval class
+@api.route(TITLE_EP)
+class JournalTitle(Resource):
+    """
+    This class handles creating, reading, updating
+    and deleting the journal title.
+    """
+    def get(self):
+        """
+        Retrieve the journal title.
+        """
+        return {
+            TITLE_RESP: TITLE,
+            EDITOR_RESP: EDITOR,
+            DATE_RESP: DATE,
+        }
+
+
+# My class
+@api.route(CRICETUS_EP)
+class HelloCricetus(Resource):
+    """
+    The purpose of the HelloWorld class is to have a simple test to see if the
+    app is working at all.
+    """
+    def get(self):
+        """
+        A trivial endpoint to see if the server is running.
+        It just answers with "hello world."
+        """
+        return {CRICETUS_RESP: 'Ich kein bin ein Hamster...'}
+
 
 @api.route(HELLO_EP)
 class HelloWorld(Resource):
