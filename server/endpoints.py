@@ -9,6 +9,7 @@ from flask_restx import Resource, Api  # Namespace, fields
 from flask_cors import CORS
 
 import data.people as ppl
+
 # import werkzeug.exceptions as wz
 
 app = Flask(__name__)
@@ -32,6 +33,7 @@ EDITOR_RESP = 'Editor'
 EDITOR = 'Cybercricetus xm2204@nyu.edu'
 DATE_RESP = 'Date'
 DATE = '2024-10-01'
+PEOPLE_EP = '/people'
 
 
 # Journal Retrieval class
@@ -41,6 +43,7 @@ class JournalTitle(Resource):
     This class handles creating, reading, updating
     and deleting the journal title.
     """
+
     def get(self):
         """
         Retrieve the journal title.
@@ -59,6 +62,7 @@ class HelloCricetus(Resource):
     The purpose of the HelloWorld class is to have a simple test to see if the
     app is working at all.
     """
+
     def get(self):
         """
         A trivial endpoint to see if the server is running.
@@ -73,6 +77,7 @@ class HelloWorld(Resource):
     The purpose of the HelloWorld class is to have a simple test to see if the
     app is working at all.
     """
+
     def get(self):
         """
         A trivial endpoint to see if the server is running.
@@ -87,6 +92,7 @@ class Endpoints(Resource):
     This class will serve as live, fetchable documentation of what endpoints
     are available in the system.
     """
+
     def get(self):
         """
         The `get()` method will return a list of available endpoints.
@@ -95,6 +101,7 @@ class Endpoints(Resource):
         return {"Available endpoints": endpoints}
 
 
+@api.route(PEOPLE_EP)
 class People(Resource):
     def get(self):
         return ppl.get_people()
