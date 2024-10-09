@@ -105,3 +105,9 @@ class Endpoints(Resource):
 class People(Resource):
     def get(self):
         return ppl.get_people()
+
+@api.route(f'{PEOPLE_EP}/<_id>')
+class DeletePerson(Resource):
+    def delete(self, _id):
+        ret = ppl.delete_person(_id)
+        return {'Message': ret}
