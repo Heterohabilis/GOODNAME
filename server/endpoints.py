@@ -8,6 +8,7 @@ from flask import Flask  # , request
 from flask_restx import Resource, Api  # Namespace, fields
 from flask_cors import CORS
 
+import data.people as ppl
 # import werkzeug.exceptions as wz
 
 app = Flask(__name__)
@@ -92,3 +93,8 @@ class Endpoints(Resource):
         """
         endpoints = sorted(rule.rule for rule in api.app.url_map.iter_rules())
         return {"Available endpoints": endpoints}
+
+
+class People(Resource):
+    def get(self):
+        return ppl.get_people()
