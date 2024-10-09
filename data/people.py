@@ -27,6 +27,7 @@ def get_people():
     people = people_dict
     return people
 
+
 def delete_person(_id):
     people = get_people()
     if _id in people:
