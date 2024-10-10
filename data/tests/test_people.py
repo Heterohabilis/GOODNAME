@@ -18,3 +18,12 @@ def test_del_person():
     people = ppl.get_people()
     assert len(people) < old_len
     assert ppl.DEL_EMAIL not in people
+
+ADD_EMAIL = 'yuzuka@nyu.edu'
+
+def test_create_person():
+    people = ppl.get_people()
+    assert ADD_EMAIL not in people
+    ppl.create_people('Yuzuka Rao', 'NYU', ADD_EMAIL)
+    people = ppl.get_people()
+    assert ADD_EMAIL in people

@@ -35,3 +35,9 @@ def delete_person(_id):
         return _id
     else:
         return None
+
+def create_people(name: str, affilication: str, email: str):
+    if email in people_dict:
+        raise ValueError(f'Adding duplicate {email=}')
+    people_dict[email] = {NAME: name, AFFILIATION: affiliation,
+                          EMAIL: email}
