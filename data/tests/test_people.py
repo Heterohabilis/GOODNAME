@@ -27,3 +27,4 @@ def test_create_person():
     ppl.create_people('Yuzuka Rao', 'NYU', ADD_EMAIL)
     people = ppl.get_people()
     assert ADD_EMAIL in people
+
