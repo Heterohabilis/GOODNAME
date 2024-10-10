@@ -28,3 +28,15 @@ def test_create_person():
     people = ppl.get_people()
     assert ADD_EMAIL in people
 
+def test_get_person():
+    people = ppl.get_people()
+    person = ppl.get_person(ppl.TEST_EMAIL)
+    assert isinstance(person, dict)
+
+NONEXIST_EMAIL = 'eric@nyu.edu'
+
+def test_get_person_not_exist():
+    people = ppl.get_people()
+    person = ppl.get_person(NONEXIST_EMAIL)
+    assert person is None
+

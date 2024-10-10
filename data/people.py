@@ -42,3 +42,11 @@ def create_people(name: str, affiliation: str, email: str):
         raise ValueError(f'Adding duplicate {email=}')
     people_dict[email] = {NAME: name, AFFILIATION: affiliation,
                           EMAIL: email}
+
+
+def get_person(_id):
+    people = get_people()
+    if _id in people:
+        return people[_id]
+    else:
+        return None
