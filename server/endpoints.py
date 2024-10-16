@@ -104,7 +104,7 @@ class Endpoints(Resource):
 @api.route(PEOPLE_EP)
 class People(Resource):
     def get(self):
-        return ppl.get_people()
+        return ppl.read()
 
 
 @api.route(f'{PEOPLE_EP}/<_id>')

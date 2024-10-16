@@ -4,7 +4,7 @@ import data.people as ppl
 
 
 def test_get_people():
-    people = ppl.get_people()
+    people = ppl.read()
     assert isinstance(people, dict)
     assert len(people) > 0
     for _id, person in people.items():
@@ -12,9 +12,9 @@ def test_get_people():
         assert ppl.NAME in person
 
 def test_del_person():
-    people = ppl.get_people()
+    people = ppl.read()
     old_len = len(people)
     ppl.delete_person(ppl.DEL_EMAIL)
-    people = ppl.get_people()
+    people = ppl.read()
     assert len(people) < old_len
     assert ppl.DEL_EMAIL not in people
