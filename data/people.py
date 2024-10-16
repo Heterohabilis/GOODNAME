@@ -45,7 +45,7 @@ def create_people(name: str, affiliation: str, email: str):
 
 
 def get_person(_id):
-    people = get_people()
+    people = read()
     if _id in people:
         return people[_id]
     else:
