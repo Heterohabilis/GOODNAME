@@ -11,6 +11,7 @@ from flask_cors import CORS
 import werkzeug.exceptions as wz
 
 import data.people as ppl
+import data.text as tx
 
 # import werkzeug.exceptions as wz
 
@@ -36,6 +37,7 @@ EDITOR = 'Cybercricetus xm2204@nyu.edu'
 DATE_RESP = 'Date'
 DATE = '2024-10-01'
 PEOPLE_EP = '/people'
+TEXT_EP = '/text'
 
 MESSAGE = "Message"
 RETURN = 'return'
@@ -188,3 +190,12 @@ class SetAffiliation(Resource):
                 MESSAGE: 'Cannot find such people!',
                 RETURN: f'Value: {ret}'
             }
+
+
+@api.route(TEXT_EP)
+class Text(Resource):
+    """
+    This class handles creating, reading, updating and deleting text.
+    """
+    def get(self):
+        return tx.read()
