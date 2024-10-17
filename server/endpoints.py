@@ -103,12 +103,22 @@ class Endpoints(Resource):
 
 @api.route(PEOPLE_EP)
 class People(Resource):
+    """
+    This class handles creating, reading, updating
+    and deleting journal people.
+    """
     def get(self):
+        """
+        Retrieve the journal people.
+        """
         return ppl.read()
 
 
 @api.route(f'{PEOPLE_EP}/<_id>')
 class DeletePerson(Resource):
     def delete(self, _id):
+        """
+        Delete the journal person.
+        """
         ret = ppl.delete_person(_id)
         return {'Message': ret}
