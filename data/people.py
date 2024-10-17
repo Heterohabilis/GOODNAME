@@ -50,3 +50,12 @@ def get_person(_id):
         return people[_id]
     else:
         return None
+
+
+def set_affiliation(_id, affiliation: str) -> str:
+    people = read()
+    if _id in people:
+        people[_id][AFFILIATION] = affiliation
+        return people[_id][AFFILIATION]
+    else:
+        return None

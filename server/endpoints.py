@@ -154,3 +154,37 @@ class PeopleCreate(Resource):
             MESSAGE: 'Person added!',
             RETURN: ret,
         }
+
+
+AFF_SET_FLDS = api.model('AffiliationSetEntry', {
+    ppl.EMAIL: fields.String,
+    ppl.AFFILIATION: fields.String,
+})
+
+
+@api.route(f'{PEOPLE_EP}/set_affiliation')
+class SetAffiliation(Resource):
+    """
+    This endpoint is for setting affiliation
+    """
+    @api.response(HTTPStatus.OK, 'Success')
+    @api.response(HTTPStatus.NOT_ACCEPTABLE, 'Not acceptable')
+    @api.expect(AFF_SET_FLDS)
+    def put(self):
+        try:
+            _id = request.json.get(ppl.EMAIL)
+            affiliation = request.json.get(ppl.AFFILIATION)
+            ret = ppl.set_affiliation(_id, affiliation)
+        except Exception as err:
+            raise wz.NotAcceptable(f'Could not set affiliation: '
+                                   f'{err=}')
+        if ret:
+            return {
+                MESSAGE: 'Affilation set!',
+                RETURN: f'New Affiliation: {ret}',
+            }
+        else:
+            return {
+                MESSAGE: 'Cannot find such people!',
+                RETURN: f'Value: {ret}'
+            }

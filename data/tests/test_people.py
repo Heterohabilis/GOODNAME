@@ -39,4 +39,3 @@ def test_get_person_not_exist():
     people = ppl.read()
     person = ppl.get_person(NONEXIST_EMAIL)
     assert person is None
-
