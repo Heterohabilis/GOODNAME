@@ -2,11 +2,13 @@
 This is the file containing all of the endpoints for our flask app.
 The endpoint called `endpoints` will return all available endpoints.
 """
-# from http import HTTPStatus
+from http import HTTPStatus
 
-from flask import Flask  # , request
-from flask_restx import Resource, Api  # Namespace, fields
+from flask import Flask, request
+from flask_restx import Resource, Api, fields  # Namespace, fields
 from flask_cors import CORS
+
+import werkzeug.exceptions as wz
 
 import data.people as ppl
 
@@ -34,6 +36,9 @@ EDITOR = 'Cybercricetus xm2204@nyu.edu'
 DATE_RESP = 'Date'
 DATE = '2024-10-01'
 PEOPLE_EP = '/people'
+
+MESSAGE = "Message"
+RETURN = 'return'
 
 
 # Journal Retrieval class
@@ -112,3 +117,30 @@ class DeletePerson(Resource):
     def delete(self, _id):
         ret = ppl.delete_person(_id)
         return {'Message': ret}
+
+
+PEOPLE_CREATE_FLDS = api.model('AddNewPeopleEntry', {
+    ppl.NAME: fields.String,
+    ppl.EMAIL: fields.String,
+    ppl.AFFILIATION: fields.String,
+})
+
+
+@api.route(f'{PEOPLE_EP}/create')
+class PeopleCreate(Resource):
+    @api.response(HTTPStatus.OK, 'Success')
+    @api.response(HTTPStatus.NOT_ACCEPTABLE, 'Not acceptable')
+    @api.expect(PEOPLE_CREATE_FLDS)
+    def put(self):
+        try:
+            name = request.json.get(ppl.NAME)
+            affiliation = request.json.get(ppl.AFFILIATION)
+            email = request.json.get(ppl.EMAIL)
+            ret = ppl.create(name, affiliation, email)
+        except Exception as err:
+            raise wz.NotAcceptable(f'Could not add person: '
+                                   f'{err=}')
+        return {
+            MESSAGE: 'Person added!',
+            RETURN: ret,
+        }
