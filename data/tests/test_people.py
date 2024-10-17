@@ -39,3 +39,17 @@ def test_get_person_not_exist():
     people = ppl.read()
     person = ppl.get_person(NONEXIST_EMAIL)
     assert person is None
+
+TEST_AFF = "steam"
+
+def test_set_affilation():
+    people = ppl.read()
+    old_aff = people[ppl.TEST_EMAIL][ppl.AFFILIATION]
+    ppl.set_affiliation(ppl.TEST_EMAIL, TEST_AFF)
+    assert old_aff != people[ppl.TEST_EMAIL][ppl.AFFILIATION]
+    assert people[ppl.TEST_EMAIL][ppl.AFFILIATION] == TEST_AFF
+
+def test_set_affilation_not_exist():
+    people = ppl.read()
+    res = ppl.set_affiliation(NONEXIST_EMAIL, TEST_AFF)
+    assert not res
