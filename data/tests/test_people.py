@@ -28,6 +28,10 @@ def test_create_person():
     people = ppl.read()
     assert ADD_EMAIL in people
 
+def test_create_deplicate():
+    with pytest.raises(ValueError):
+        ppl.create_people('Repeated Name', 'Afflication', ppl.TEST_EMAIL)
+
 def test_get_person():
     people = ppl.read()
     person = ppl.get_person(ppl.TEST_EMAIL)
