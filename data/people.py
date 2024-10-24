@@ -1,3 +1,5 @@
+import re
+
 MIN_USER_NAME_LEN = 2
 NAME = 'name'
 ROLES = 'roles'
@@ -21,6 +23,13 @@ people_dict = {
         EMAIL: DEL_EMAIL,
     }
 }
+
+
+CHAR_OR_DIGIT = '[A-Za-z0-9]'
+
+
+def is_valid_email(addr: str) -> bool:
+    return re.match(f"{CHAR_OR_DIGIT}.*@{CHAR_OR_DIGIT}.*", addr)
 
 
 def read():
