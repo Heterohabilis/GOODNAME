@@ -2,6 +2,23 @@ import pytest
 
 import data.people as ppl
 
+ATLESS = 'cybercricetus'
+NAMELESS = '@nyu.edu'
+DOMAINLESS = 'cybercricetus@'
+FULL = "cybercricetus@nyu.edu"
+
+
+def test_is_mail_valid_atless():
+    assert not ppl.is_valid_email(ATLESS)
+
+def test_is_mail_valid_nameless():
+    assert not ppl.is_valid_email(NAMELESS)
+
+def test_is_mail_valid_domainless():
+    assert not ppl.is_valid_email(DOMAINLESS)
+
+def test_is_mail_valid_full():
+    assert ppl.is_valid_email(FULL)
 
 def test_read():
     people = ppl.read()
