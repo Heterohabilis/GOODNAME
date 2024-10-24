@@ -153,6 +153,11 @@ class PeopleCreate(Resource):
             name = request.json.get(ppl.NAME)
             affiliation = request.json.get(ppl.AFFILIATION)
             email = request.json.get(ppl.EMAIL)
+            if not ppl.is_valid_email(email):
+                return {
+                    MESSAGE: 'Wrong Email Format',
+                    RETURN: None,
+                }
             ret = ppl.create_people(name, affiliation, email)
         except Exception as err:
             raise wz.NotAcceptable(f'Could not add person: '
