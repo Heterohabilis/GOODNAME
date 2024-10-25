@@ -46,11 +46,11 @@ def delete_person(_id):
         return None
 
 
-def create_people(name: str, affiliation: str, email: str):
+def create_people(name: str, affiliation: str, email: str, role: str):
     if email in people_dict:
         raise ValueError(f'Adding duplicate {email=}')
     people_dict[email] = {NAME: name, AFFILIATION: affiliation,
-                          EMAIL: email}
+                          EMAIL: email, ROLES: role}
 
 
 def get_person(_id):

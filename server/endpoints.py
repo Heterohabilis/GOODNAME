@@ -140,6 +140,7 @@ PEOPLE_CREATE_FLDS = api.model('AddNewPeopleEntry', {
     ppl.NAME: fields.String,
     ppl.EMAIL: fields.String,
     ppl.AFFILIATION: fields.String,
+    ppl.ROLES: fields.List(fields.String),
 })
 
 
@@ -153,12 +154,13 @@ class PeopleCreate(Resource):
             name = request.json.get(ppl.NAME)
             affiliation = request.json.get(ppl.AFFILIATION)
             email = request.json.get(ppl.EMAIL)
+            roles = request.json.get(ppl.ROLES)
             if not ppl.is_valid_email(email):
                 return {
                     MESSAGE: 'Wrong Email Format',
                     RETURN: None,
                 }
-            ret = ppl.create_people(name, affiliation, email)
+            ret = ppl.create_people(name, affiliation, email, roles)
         except Exception as err:
             raise wz.NotAcceptable(f'Could not add person: '
                                    f'{err=}')
