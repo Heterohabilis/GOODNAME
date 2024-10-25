@@ -1,5 +1,7 @@
 import re
 
+import data.roles as rls
+
 MIN_USER_NAME_LEN = 2
 NAME = 'name'
 ROLES = 'roles'
@@ -46,7 +48,18 @@ def delete_person(_id):
         return None
 
 
-def create_people(name: str, affiliation: str, email: str, role: str):
+def is_valid_person(name: str, affiliation: str, email: str,
+                    role: str) -> bool:
+    if email in people_dict:
+        raise ValueError(f'Adding duplicate {email=}')
+    if not is_valid_email(email):
+        raise ValueError(f'Invalid email: {email}')
+    if not rls.is_valid(role):
+        raise ValueError(f'Invalid role: {role}')
+    return True
+
+
+def create_person(name: str, affiliation: str, email: str, role: str):
     if email in people_dict:
         raise ValueError(f'Adding duplicate {email=}')
     people_dict[email] = {NAME: name, AFFILIATION: affiliation,

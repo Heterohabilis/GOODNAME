@@ -50,14 +50,14 @@ ADD_EMAIL = 'yuzuka@nyu.edu'
 def test_create_person():
     people = ppl.read()
     assert ADD_EMAIL not in people
-    ppl.create_people('Yuzuka Rao', 'NYU', ADD_EMAIL, TEST_CODE)
+    ppl.create_person('Yuzuka Rao', 'NYU', ADD_EMAIL, TEST_CODE)
     people = ppl.read()
     assert ADD_EMAIL in people
 
 
 def test_create_duplicate():
     with pytest.raises(ValueError):
-        ppl.create_people('Repeated Name', 'Affiliation', ppl.TEST_EMAIL, TEST_CODE)
+        ppl.create_person('Repeated Name', 'Affiliation', ppl.TEST_EMAIL, TEST_CODE)
 
 
 # def test_create_bad_email():
