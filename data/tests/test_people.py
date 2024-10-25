@@ -8,6 +8,21 @@ ATLESS = 'cybercricetus'
 NAMELESS = '@nyu.edu'
 DOMAINLESS = 'cybercricetus@'
 FULL = "cybercricetus@nyu.edu"
+SPECIALCHARS = "elaine#e@nyu.edu"
+WITHUNDERSCORE = "elaine_ll@nyu.edu"
+WITHDOT = "elaine.ll@nyu.edu"
+WITHDASH = "elaine-ll@nyu.edu"
+STARTWITHDOT = ".elaine@nyu.edu"
+ENDWITHDASH = "elaine-@nyu.edu"
+CONSECUTIVEDOTS = "elaine..ll@nyu.edu"
+DOMAINLASTMISSING = "elaine@nyu"
+DOMAINSPECIALCHARS = "elaine@nyu#archive.edu"
+DOMAINCONSECUTIVEDOTS = "elaine@nyu..edu"
+DOMAINSTARTWITHDOT = "elaine@.nyu.edu"
+DOMAINLESSTHANTWOCHARS = "elaine@nyu.e"
+DOMAINMORETHANTWOCHARS = "elaine@nyu.ed"
+DOMAINWITHDASH = "elaine@nyu-archive.edu"
+DOMAINENDWITHDASH = "elaine@nyu-.edu"
 
 
 def test_is_mail_valid_atless():
@@ -24,6 +39,66 @@ def test_is_mail_valid_domainless():
 
 def test_is_mail_valid_full():
     assert ppl.is_valid_email(FULL)
+
+
+def test_has_special_chars():
+    assert not ppl.is_valid_email(SPECIALCHARS)
+
+
+def test_has_underscore():
+    assert ppl.is_valid_email(WITHUNDERSCORE)
+
+
+def test_has_dot():
+    assert ppl.is_valid_email(WITHDOT)
+
+
+def test_has_dash():
+    assert ppl.is_valid_email(WITHDASH)
+
+
+def test_start_with_dot():
+    assert not ppl.is_valid_email(STARTWITHDOT)
+
+
+def test_end_with_dash():
+    assert not ppl.is_valid_email(ENDWITHDASH)
+
+
+def test_consecutive_dots():
+    assert not ppl.is_valid_email(CONSECUTIVEDOTS)
+
+
+def test_domain_last_missing():
+    assert not ppl.is_valid_email(DOMAINLASTMISSING)
+
+
+def test_domain_special_chars():
+    assert not ppl.is_valid_email(DOMAINSPECIALCHARS)
+
+
+def test_domain_consecutive_dots():
+    assert not ppl.is_valid_email(DOMAINCONSECUTIVEDOTS)
+
+
+def test_domain_start_with_dot():
+    assert not ppl.is_valid_email(DOMAINSTARTWITHDOT)
+
+
+def test_domain_less_than_two_chars():
+    assert not ppl.is_valid_email(DOMAINLESSTHANTWOCHARS)
+
+
+def test_domain_more_than_two_chars():
+    assert ppl.is_valid_email(DOMAINMORETHANTWOCHARS)
+
+
+def test_domain_with_dash():
+    assert ppl.is_valid_email(DOMAINWITHDASH)
+
+
+def test_domain_end_with_dash():
+    assert not ppl.is_valid_email(DOMAINENDWITHDASH)
 
 
 def test_read():

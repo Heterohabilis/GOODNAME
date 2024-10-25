@@ -28,10 +28,15 @@ people_dict = {
 
 
 CHAR_OR_DIGIT = '[A-Za-z0-9]'
+UNDERSCORE_DASH_DOT = '[-_.]'
+CHAR = '[A-Za-z]'
 
 
 def is_valid_email(addr: str) -> bool:
-    return re.match(f"{CHAR_OR_DIGIT}.*@{CHAR_OR_DIGIT}.*", addr)
+    prefix_pattern = f"{CHAR_OR_DIGIT}+{UNDERSCORE_DASH_DOT}?{CHAR_OR_DIGIT}+"
+    domain_pattern = f"@{CHAR_OR_DIGIT}+[-]?{CHAR_OR_DIGIT}+[.]{CHAR}{{2,}}"
+    pattern = f"^{prefix_pattern}{domain_pattern}$"
+    return re.match(pattern, addr)
 
 
 def read():
