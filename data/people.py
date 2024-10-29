@@ -54,21 +54,30 @@ def delete_person(_id):
 
 
 def is_valid_person(name: str, affiliation: str, email: str,
-                    role: str) -> bool:
+                    role: str = None, roles: list = None) -> bool:
     if email in people_dict:
         raise ValueError(f'Adding duplicate {email=}')
     if not is_valid_email(email):
         raise ValueError(f'Invalid email: {email}')
-    if not rls.is_valid(role):
-        raise ValueError(f'Invalid role: {role}')
+    if role:
+        if not rls.is_valid(role):
+            raise ValueError(f'Invalid role: {role}')
+    elif roles:
+        for role in roles:
+            if not rls.is_valid(role):
+                raise ValueError(f'Invalid role: {role}')
     return True
 
 
 def create_person(name: str, affiliation: str, email: str, role: str):
     if email in people_dict:
         raise ValueError(f'Adding duplicate {email=}')
-    people_dict[email] = {NAME: name, AFFILIATION: affiliation,
-                          EMAIL: email, ROLES: role}
+    if is_valid_person(name, affiliation, email, role=role):
+        roles = []
+        if role:
+            roles.append(role)
+        people_dict[email] = {NAME: name, AFFILIATION: affiliation,
+                              EMAIL: email, ROLES: roles}
 
 
 def get_person(_id):
@@ -86,3 +95,16 @@ def set_affiliation(_id, affiliation: str) -> str:
         return people[_id][AFFILIATION]
     else:
         return None
+
+
+def get_masthead():
+    masthead = {}
+    mh_roles = rls.get_masthead_roles()
+    for mh_roles, text in mh_roles.items():
+        people_w_role = {}
+        for person in read():
+            pass
+            # if has_role(person):
+            #     put their record in people_w_role
+        masthead[text] = people_w_role
+    return masthead
