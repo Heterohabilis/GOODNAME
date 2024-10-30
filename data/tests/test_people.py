@@ -171,3 +171,9 @@ def test_set_affilation_not_exist():
     people = ppl.read()
     res = ppl.set_affiliation(NONEXIST_EMAIL, TEST_AFF)
     assert not res
+
+
+def test_create_bad_email():
+    with pytest.raises(ValueError):
+        ppl.create_person('Do not care about name',
+                   'Or affiliation', 'bademail', TEST_CODE)
