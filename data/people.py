@@ -108,3 +108,12 @@ def get_masthead():
             #     put their record in people_w_role
         masthead[text] = people_w_role
     return masthead
+
+
+def update(name: str, affiliation: str, email: str, roles: list):
+    if email not in people_dict:
+        raise ValueError(f'Updating non-existent person: {email=}')
+    if is_valid_person(name, affiliation, email, roles=roles):
+        people_dict[email] = {NAME: name, AFFILIATION: affiliation,
+                              EMAIL: email, ROLES: roles}
+        return email
