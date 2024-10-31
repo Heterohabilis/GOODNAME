@@ -189,7 +189,6 @@ def test_create_bad_email():
                    'Or affiliation', 'bademail', TEST_CODE)
         
         
-'''
 def test_has_role(temp_person):
     person_rec = ppl.read_one(temp_person)
     assert ppl.has_role(person_rec, TEST_CODE)
@@ -198,4 +197,3 @@ def test_has_role(temp_person):
 def test_doesnt_have_role(temp_person):
     person_rec = ppl.read_one(temp_person)
     assert not ppl.has_role(person_rec, 'Not a good role!')
-'''
