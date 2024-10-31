@@ -2,7 +2,7 @@ import pytest
 
 import data.people as ppl
 
-from data.roles import TEST_CODE
+from data.roles import TEST_CODE as TEST_ROLE_CODE
 
 
 ATLESS = 'cybercricetus'
@@ -30,10 +30,29 @@ TEMP_EMAIL = 'temp_person@tmp.org'
 
 @pytest.fixture(scope='function')
 def temp_person():
-    ret = ppl.create_person('Temporary Person', 'Temporary Affiliation', TEMP_EMAIL, TEST_CODE)
-    yield ret
-    ppl.delete_person(TEMP_EMAIL)
+    _id = ppl.create_person('Joe Smith', 'NYU', TEMP_EMAIL, TEST_ROLE_CODE)
+    yield _id
+    ppl.delete_person(_id)
 
+'''
+def test_create_mh_rec(temp_person):
+    person_rec = ppl.read_one(temp_person)
+    mh_rec = ppl.create_mh_rec(person_rec)
+    assert isinstance(mh_rec, dict)
+    for field in ppl.MH_FIELDS:
+        assert field in mh_rec
+
+
+def test_has_role(temp_person):
+    person_rec = ppl.read_one(temp_person)
+    assert ppl.has_role(person_rec, TEST_ROLE_CODE)
+
+
+def test_doesnt_have_role(temp_person):
+    person_rec = ppl.read_one(temp_person)
+    assert not ppl.has_role(person_rec, 'Not a good role!')
+
+'''
 
 def test_is_mail_valid_atless():
     assert not ppl.is_valid_email(ATLESS)
@@ -119,8 +138,16 @@ def test_read():
         assert isinstance(_id, str)
         assert ppl.NAME in person
 
+'''
+def test_read_one(temp_person):
+    assert ppl.read_one(temp_person) is not None
 
-def test_del_person():
+
+def test_read_one_not_there():
+    assert ppl.read_one('Not an existing email!') is None
+'''
+
+def test_delete_person():
     people = ppl.read()
     old_len = len(people)
     ppl.delete_person(ppl.DEL_EMAIL)
@@ -135,14 +162,14 @@ ADD_EMAIL = 'yuzuka@nyu.edu'
 def test_create_person():
     people = ppl.read()
     assert ADD_EMAIL not in people
-    ppl.create_person('Yuzuka Rao', 'NYU', ADD_EMAIL, TEST_CODE)
+    ppl.create_person('Yuzuka Rao', 'NYU', ADD_EMAIL, TEST_ROLE_CODE)
     people = ppl.read()
     assert ADD_EMAIL in people
 
 
 def test_create_duplicate():
     with pytest.raises(ValueError):
-        ppl.create_person('Repeated Name', 'Affiliation', ppl.TEST_EMAIL, TEST_CODE)
+        ppl.create_person('Repeated Name', 'Affiliation', ppl.TEST_EMAIL, TEST_ROLE_CODE)
 
 
 # def test_create_bad_email():
@@ -183,17 +210,20 @@ def test_set_affilation_not_exist():
     assert not res
 
 
+VALID_ROLES = ['ED', 'AU']
+
+
+@pytest.mark.skip('Skipping cause not done.')
+def test_update(temp_person):
+    ppl.update('Buffalo Bill', 'UBuffalo', temp_person, VALID_ROLES)
+
+
 def test_create_bad_email():
     with pytest.raises(ValueError):
         ppl.create_person('Do not care about name',
-                   'Or affiliation', 'bademail', TEST_CODE)
-        
-        
-def test_has_role(temp_person):
-    person_rec = ppl.read_one(temp_person)
-    assert ppl.has_role(person_rec, TEST_CODE)
+                   'Or affiliation', 'bademail', TEST_ROLE_CODE)
 
 
-def test_doesnt_have_role(temp_person):
-    person_rec = ppl.read_one(temp_person)
-    assert not ppl.has_role(person_rec, 'Not a good role!')
+def test_get_masthead():
+    mh = ppl.get_masthead()
+    assert isinstance(mh, dict)

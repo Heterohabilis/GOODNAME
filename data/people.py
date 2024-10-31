@@ -44,6 +44,14 @@ def read():
     return people
 
 
+def read_one(email: str) -> dict:
+    """
+    Return a person record if email present in DB,
+    else None.
+    """
+    return people_dict.get(email)
+
+
 def delete_person(_id):
     people = read()
     if _id in people:
@@ -97,15 +105,26 @@ def set_affiliation(_id, affiliation: str) -> str:
         return None
 
 
-def get_masthead():
+MH_FIELDS = [NAME, AFFILIATION]
+
+
+def create_mh_rec(person: dict) -> dict:
+    mh_rec = {}
+    for field in MH_FIELDS:
+        mh_rec[field] = person.get(field, '')
+    return mh_rec
+
+
+def get_masthead() -> dict:
     masthead = {}
     mh_roles = rls.get_masthead_roles()
-    for mh_roles, text in mh_roles.items():
-        people_w_role = {}
-        for person in read():
-            pass
-            # if has_role(person):
-            #     put their record in people_w_role
+    for mh_role, text in mh_roles.items():
+        people_w_role = []
+        people = read()
+        for _id, person in people.items():
+            if has_role(person, mh_role):
+                rec = create_mh_rec(person)
+                people_w_role.append(rec)
         masthead[text] = people_w_role
     return masthead
 
