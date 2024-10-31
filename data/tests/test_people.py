@@ -24,6 +24,15 @@ DOMAINMORETHANTWOCHARS = "elaine@nyu.ed"
 DOMAINWITHDASH = "elaine@nyu-archive.edu"
 DOMAINENDWITHDASH = "elaine@nyu-.edu"
 
+TEMP_EMAIL = 'temp_person@tmp.org'
+
+
+@pytest.fixture(scope='function')
+def temp_person():
+    ret = ppl.create_person('Temporary Person', 'Temporary Affiliation', TEMP_EMAIL, TEST_CODE)
+    yield ret
+    ppl.delete_person(TEMP_EMAIL)
+
 
 def test_is_mail_valid_atless():
     assert not ppl.is_valid_email(ATLESS)
