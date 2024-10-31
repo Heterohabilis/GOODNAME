@@ -187,6 +187,8 @@ def test_create_bad_email():
     with pytest.raises(ValueError):
         ppl.create_person('Do not care about name',
                    'Or affiliation', 'bademail', TEST_CODE)
+        
+        
 '''
 def test_has_role(temp_person):
     person_rec = ppl.read_one(temp_person)
