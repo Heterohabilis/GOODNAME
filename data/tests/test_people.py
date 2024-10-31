@@ -4,6 +4,7 @@ import data.people as ppl
 
 from data.roles import TEST_CODE
 
+
 ATLESS = 'cybercricetus'
 NAMELESS = '@nyu.edu'
 DOMAINLESS = 'cybercricetus@'
@@ -186,3 +187,13 @@ def test_create_bad_email():
     with pytest.raises(ValueError):
         ppl.create_person('Do not care about name',
                    'Or affiliation', 'bademail', TEST_CODE)
+'''
+def test_has_role(temp_person):
+    person_rec = ppl.read_one(temp_person)
+    assert ppl.has_role(person_rec, TEST_CODE)
+
+
+def test_doesnt_have_role(temp_person):
+    person_rec = ppl.read_one(temp_person)
+    assert not ppl.has_role(person_rec, 'Not a good role!')
+'''
