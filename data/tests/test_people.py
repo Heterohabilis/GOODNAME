@@ -25,6 +25,7 @@ DOMAINWITHDASH = "elaine@nyu-archive.edu"
 DOMAINENDWITHDASH = "elaine@nyu-.edu"
 
 TEMP_EMAIL = 'temp_person@tmp.org'
+TEMP_TEST = 'temp-test'
 
 
 @pytest.fixture(scope='function')
