@@ -117,3 +117,10 @@ def update(name: str, affiliation: str, email: str, roles: list):
         people_dict[email] = {NAME: name, AFFILIATION: affiliation,
                               EMAIL: email, ROLES: roles}
         return email
+
+
+
+def has_role(person: dict, role: str) -> bool:
+    if role in person.get(ROLES):
+        return True
+    return False
