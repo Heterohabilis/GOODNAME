@@ -14,13 +14,13 @@ DEL_EMAIL = 'del@nyu.edu'
 people_dict = {
     TEST_EMAIL: {
         NAME: 'Elaine Li',
-        ROLES: [],
+        ROLES: [rls.AUTHOR_CODE],
         AFFILIATION: 'NYU',
         EMAIL: TEST_EMAIL
     },
     DEL_EMAIL: {
         NAME: 'Cybercricetus',
-        ROLES: [],
+        ROLES: [rls.CE_CODE],
         AFFILIATION: 'NYU',
         EMAIL: DEL_EMAIL,
     }
@@ -142,3 +142,10 @@ def has_role(person: dict, role: str) -> bool:
     if role in person.get(ROLES):
         return True
     return False
+
+
+MH_FIELDS = [NAME, AFFILIATION]
+
+
+def get_mh_fields(journal_code=None) -> list:
+    return MH_FIELDS

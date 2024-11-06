@@ -25,12 +25,12 @@ DOMAINMORETHANTWOCHARS = "elaine@nyu.ed"
 DOMAINWITHDASH = "elaine@nyu-archive.edu"
 DOMAINENDWITHDASH = "elaine@nyu-.edu"
 
-TEMP_EMAIL = 'temp_person@tmp.org'
+TEMP_EMAIL = 'bvvdIsTrash@trash.bvvd'
 
 
 @pytest.fixture(scope='function')
 def temp_person():
-    _id = ppl.create_person('Joe Smith', 'NYU', TEMP_EMAIL, TEST_ROLE_CODE)
+    _id = ppl.create_person('Cybercricetus', 'BVVD', TEMP_EMAIL, TEST_ROLE_CODE)
     yield _id
     ppl.delete_person(_id)
 
