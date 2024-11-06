@@ -34,6 +34,12 @@ def temp_person():
     yield _id
     ppl.delete_person(_id)
 
+
+def test_get_mh_fields():
+    flds = ppl.get_mh_fields()
+    assert isinstance(flds, list)
+    assert len(flds) > 0
+
 '''
 def test_create_mh_rec(temp_person):
     person_rec = ppl.read_one(temp_person)
