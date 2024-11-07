@@ -16,3 +16,12 @@ def test_read_one():
 
 def test_read_one_not_found():
     assert txt.read_one('Not a page key!') == {}
+
+
+def test_delete():
+    text_data = txt.read()
+    old_len = len(text_data)
+    txt.delete(txt.DEL_KEY)
+    text_data = txt.read()
+    assert len(text_data) < old_len
+    assert txt.DEL_KEY not in text_data

@@ -43,6 +43,15 @@ def read_one(key: str) -> dict:
     return result
 
 
+def delete(key):
+    # This should take a key and delete the page dictionary
+    # for that key. Return the key if it was deleted, else None.
+    if key in text_dict:
+        del text_dict[key]
+        return key
+    return None
+
+
 def main():
     print(read())
 
