@@ -130,7 +130,7 @@ class Person(Resource):
         """
         Retrieve the journal person.
         """
-        person = ppl.get_person(_id)
+        person = ppl.read_one(_id)
         if person:
             return person
         else:

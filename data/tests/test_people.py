@@ -182,23 +182,7 @@ def test_create_duplicate():
 #     with pytest.raises(ValueError):
 #         ppl.create_people('Do not care about name',
 #                           'Affiliation', 'bademail', TEST_CODE)
-
-
-def test_get_person():
-    people = ppl.read()
-    person = ppl.get_person(ppl.TEST_EMAIL)
-    assert isinstance(person, dict)
-
-
 NONEXIST_EMAIL = 'eric@nyu.edu'
-
-
-def test_get_person_not_exist():
-    people = ppl.read()
-    person = ppl.get_person(NONEXIST_EMAIL)
-    assert person is None
-
-
 TEST_AFF = "steam"
 
 
