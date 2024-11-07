@@ -40,8 +40,7 @@ def is_valid_email(addr: str) -> bool:
 
 
 def read():
-    people = people_dict
-    return people
+    return people_dict
 
 
 def read_one(email: str) -> dict:
@@ -63,8 +62,10 @@ def delete_person(_id):
 
 def is_valid_person(name: str, affiliation: str, email: str,
                     role: str = None, roles: list = None) -> bool:
+    '''
     if email in people_dict:
         raise ValueError(f'Adding duplicate {email=}')
+    '''
     if not is_valid_email(email):
         raise ValueError(f'Invalid email: {email}')
     if role:
