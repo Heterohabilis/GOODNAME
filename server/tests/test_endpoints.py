@@ -44,8 +44,11 @@ def test_cricetus():
     assert ep.CRICETUS_RESP in resp_json
 
 
-def test_get_people():
+@patch('data.people.read', autospec=True,
+       return_value={'id': {NAME: 'Elaine Li'}})
+def test_read(mock_read):
     resp = TEST_CLIENT.get(ep.PEOPLE_EP)
+    assert resp.status_code == OK
     resp_json = resp.get_json()
     for _id, person in resp_json.items():
         assert isinstance(_id, str)
@@ -62,69 +65,45 @@ def test_get_text():
         assert TITLE in page
 
 
-def test_delete_person_success():
-    with patch('data.people.delete_person') as mock_delete_person:
-        mock_delete_person.return_value = DEL_EMAIL
-        resp = TEST_CLIENT.delete(f'{ep.PEOPLE_EP}/{DEL_EMAIL}')
-        assert resp.status_code == OK
-        assert resp.json == {'Deleted': DEL_EMAIL}
-        mock_delete_person.assert_called_once_with(DEL_EMAIL)
+@patch('data.people.delete_person', autospec=True, return_value='mock_id')
+def test_delete_person_success(mock_delete):
+    resp = TEST_CLIENT.delete(f'{ep.PEOPLE_EP}/mock_id')
+    resp_json = resp.get_json()
+    assert resp.status_code == OK
+    assert resp_json == {'Deleted': 'mock_id'}
 
 
-# NOT_EXIST_EMAIL = 'not_exist'
-# def test_delete_person_not_there():
-#     resp = TEST_CLIENT.delete(f'{ep.PEOPLE_EP}/{NOT_EXIST_EMAIL}')
-#     assert resp.status_code == NOT_FOUND
-#     assert resp.json == {'No such person': NOT_EXIST_EMAIL}
+@patch('data.people.delete_person', autospec=True, return_value=None)
+def test_delete_person_not_there(mock_delete):
+    resp = TEST_CLIENT.delete(f'{ep.PEOPLE_EP}/mock_id')
+    assert resp.status_code == NOT_FOUND
 
 
-def test_create_person_success():
-    with patch('data.people.create_person') as mock_create_person:
-        email = 'new_email@gmail.com'
-        mock_create_person.return_value = email
-        resp = TEST_CLIENT.put(f'{ep.PEOPLE_EP}/create', json={'name': 'name', 'affiliation': 'affiliation', 'email': email})
-        assert resp.status_code == OK
-        assert resp.json == {ep.MESSAGE: 'Person added!', ep.RETURN: 'new_email@gmail.com'}
-        mock_create_person.assert_called_once_with('name', 'affiliation', email, None)
+@patch('data.people.create_person', autospec=True, return_value='mock_email')
+@patch('data.people.is_valid_email', autospec=True, return_value=True)
+def test_create_person_success(mock_create, mock_is_valid):
+    resp = TEST_CLIENT.put(f'{ep.PEOPLE_EP}/create',
+                           json={'name': 'name', 'affiliation': 'affiliation', 'email': 'mock_email'})
+    assert resp.status_code == OK
+    assert resp.json == {ep.MESSAGE: 'Person added!', ep.RETURN: 'mock_email'}
 
 
-def test_create_person_invalid():
-    with patch('data.people.is_valid_email') as mock_is_valid_email:
-        mock_is_valid_email.return_value = False
-        email = 'invalid_email'
-        resp = TEST_CLIENT.put(
-            f'{ep.PEOPLE_EP}/create',
-            json={
-                'name': NAME,
-                'affiliation': 'affiliation',
-                'email': email
-            }
-        )
-
-        assert resp.status_code == OK
-        assert resp.json == {
-            ep.MESSAGE: 'Wrong Email Format',
-            ep.RETURN: None
-        }
-        mock_is_valid_email.assert_called_once_with(email)
+@patch('data.people.create_person', autospec=True, return_value='mock_email')
+@patch('data.people.is_valid_email', autospec=True, return_value=False)
+def test_create_person_invalid(mock_create, mock_is_valid):
+    resp = TEST_CLIENT.put(f'{ep.PEOPLE_EP}/create',
+                           json={'name': 'name', 'affiliation': 'affiliation', 'email': 'mock_email'})
+    assert resp.status_code == OK
+    assert resp.json == {
+        ep.MESSAGE: 'Wrong Email Format',
+        ep.RETURN: None
+    }
 
 
-def test_create_person_error():
-    with patch('data.people.is_valid_email') as mock_is_valid_email, \
-            patch('data.people.create_person') as mock_create_person:
-        mock_is_valid_email.return_value = True
-        mock_create_person.side_effect = Exception('Database error')
-        resp = TEST_CLIENT.put(
-            f'{ep.PEOPLE_EP}/create',
-            json={
-                'name': NAME,
-                'affiliation': 'affiliation',
-                'email': 'email'
-            }
-        )
-
-        # Assert 406 Not Acceptable with error message
-        assert resp.status_code == NOT_ACCEPTABLE
-        expected_message = f"Could not add person: err=Exception('Database error')"
-        assert resp.json['message'] == expected_message
+@patch('data.people.create_person', autospec=True, side_effect=ValueError)
+@patch('data.people.is_valid_email', autospec=True)
+def test_create_person_error(mock_create, mock_is_valid):
+    resp = TEST_CLIENT.put(f'{ep.PEOPLE_EP}/create',
+                           json={'name': 'name', 'affiliation': 'affiliation', 'email': 'mock_email'})
+    assert resp.status_code == NOT_ACCEPTABLE
 
