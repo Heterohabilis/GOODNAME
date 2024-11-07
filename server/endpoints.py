@@ -160,7 +160,7 @@ class PeopleCreate(Resource):
                     MESSAGE: 'Wrong Email Format',
                     RETURN: None,
                 }
-            ret = ppl.create_people(name, affiliation, email, roles)
+            ret = ppl.create_person(name, affiliation, email, roles)
         except Exception as err:
             raise wz.NotAcceptable(f'Could not add person: '
                                    f'{err=}')

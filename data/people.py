@@ -86,6 +86,7 @@ def create_person(name: str, affiliation: str, email: str, role: str):
             roles.append(role)
         people_dict[email] = {NAME: name, AFFILIATION: affiliation,
                               EMAIL: email, ROLES: roles}
+        return email
 
 
 def get_person(_id):
