@@ -1,4 +1,18 @@
+from unittest.mock import patch
+
+import pytest
+
 import data.text as txt
+
+ADD_KEY = 'AddPage'
+
+
+@pytest.fixture(scope='function')
+def temp_text():
+    txt.create(ADD_KEY, 'Add Page', 'This is a page to add.', 'mock_email')
+    yield ADD_KEY
+    txt.delete(ADD_KEY)
+
 
 def test_read():
     text_data = txt.read()
@@ -25,3 +39,14 @@ def test_delete():
     text_data = txt.read()
     assert len(text_data) < old_len
     assert txt.DEL_KEY not in text_data
+
+
+def test_create():
+    text_data = txt.read()
+    assert ADD_KEY not in text_data
+    txt.create(ADD_KEY, 'Add Page', 'This is a page to add.', 'mock_email')
+
+
+@pytest.mark.skip('Not completed')
+def test_update(temp_text):
+    txt.update(ADD_KEY, 'Add Page', 'This is a page to add.', 'mock_email')

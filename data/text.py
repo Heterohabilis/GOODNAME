@@ -10,6 +10,7 @@ EMAIL = 'email'
 
 TEST_KEY = 'HomePage'
 DEL_KEY = 'DeletePage'
+SUBM_KEY = 'SubmissonsPage'
 
 text_dict = {
     TEST_KEY: {
@@ -18,8 +19,12 @@ text_dict = {
     },
     DEL_KEY: {
         TITLE: 'Home Page',
-        TEXT: 'This is a journal about building API servers.',
+        TEXT: 'This is a text to delete.',
     },
+    SUBM_KEY: {
+        TITLE: 'Submissions Page',
+        TEXT: 'All submissions must be original work in Word format.',
+    }
 }
 
 
@@ -48,6 +53,30 @@ def delete(key):
     # for that key. Return the key if it was deleted, else None.
     if key in text_dict:
         del text_dict[key]
+        return key
+    return None
+
+
+def create(key, title, text, email=None):
+    # This should take a key and create a new page dictionary
+    # for that key. Return the key if it was created, else None.
+    if key in text_dict:
+        return None
+    if email:
+        text_dict[key] = {TITLE: title, TEXT: text, EMAIL: email}
+    else:
+        text_dict[key] = {TITLE: title, TEXT: text}
+    return key
+
+
+def update(key, title, text, email=None):
+    # This should take a key and update the page dictionary
+    # for that key. Return the key if it was updated, else None.
+    if key in text_dict:
+        if email:
+            text_dict[key] = {TITLE: title, TEXT: text, EMAIL: email}
+        else:
+            text_dict[key] = {TITLE: title, TEXT: text}
         return key
     return None
 
