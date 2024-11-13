@@ -1,5 +1,7 @@
 import pytest
 
+from unittest.mock import patch
+
 import data.people as ppl
 
 from data.roles import TEST_CODE as TEST_ROLE_CODE
@@ -240,4 +242,25 @@ def test_fancy_is_valid_person():
         Test invalid, role list... this should also raise ValueError
         '''
         ppl.is_valid_person("bvvd", "Gaijin Inc", "bvvd@isTrash.com", None, TEST_ROLES_BVVD)
+
+
+@patch('data.people.read', return_value={'test@domain.com': {'name': 'Test User'}})
+def test_get_person_success(mock_read):
+    person = ppl.get_person('test@domain.com')
+    assert person == {'name': 'Test User'}
+    mock_read.assert_called_once()  
+
+
+@patch('data.people.read', return_value={})
+def test_get_person_not_found(mock_read):
+    person = ppl.get_person('nonexistent@domain.com')
+    assert person is None
+    mock_read.assert_called_once()
+
+
+@patch('data.roles.is_valid', return_value=False)
+def test_is_valid_person_with_invalid_role(mock_is_valid):
+    with pytest.raises(ValueError, match="Invalid role:"):
+        ppl.is_valid_person(name="Alice", affiliation="University", email="alice@domain.com", role="INVALID")
+    mock_is_valid.assert_called_once_with("INVALID")
 
