@@ -217,3 +217,27 @@ def test_create_bad_email():
 def test_get_masthead():
     mh = ppl.get_masthead()
     assert isinstance(mh, dict)
+
+
+TEST_ROLES_BVVD = ['trash gamer', 'trash game', 'trash company']
+
+
+def test_fancy_is_valid_person():
+    with pytest.raises(ValueError):
+        '''
+        Test invalid email... this should raise ValueError exception
+        '''
+        ppl.is_valid_person("bvvd", "Gaijin Inc", "bvvd@bvvdIsSuck")
+
+    with pytest.raises(ValueError):
+        '''
+        Test invalid, single role... this should also raise ValueError
+        '''
+        ppl.is_valid_person("bvvd", "Gaijin Inc", "bvvd@isTrash.com", "DV")
+
+    with pytest.raises(ValueError):
+        '''
+        Test invalid, role list... this should also raise ValueError
+        '''
+        ppl.is_valid_person("bvvd", "Gaijin Inc", "bvvd@isTrash.com", None, TEST_ROLES_BVVD)
+
