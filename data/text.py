@@ -57,11 +57,12 @@ def delete(key):
     return None
 
 
-def create(key, title, text, email=None):
+def create(title, text, email=None):
     # This should take a key and create a new page dictionary
     # for that key. Return the key if it was created, else None.
+    key = title.replace(' ', '')
     if key in text_dict:
-        return None
+        raise ValueError(f'Adding duplicate {key=}')
     if email:
         text_dict[key] = {TITLE: title, TEXT: text, EMAIL: email}
     else:

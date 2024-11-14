@@ -218,9 +218,70 @@ class SetAffiliation(Resource):
 
 
 @api.route(TEXT_EP)
-class Text(Resource):
+class Texts(Resource):
     """
     This class handles creating, reading, updating and deleting text.
     """
     def get(self):
         return tx.read()
+
+
+@api.route(f'{TEXT_EP}/<_id>')
+class Text(Resource):
+    """
+    This class handles creating, reading, updating and deleting text.
+    """
+    def get(self, _id):
+        text = tx.read_one(_id)
+        if text:
+            return text
+        else:
+            raise wz.NotFound(f'No such record: {_id}')
+
+    @api.response(HTTPStatus.OK, 'Success.')
+    @api.response(HTTPStatus.NOT_FOUND, 'No such text.')
+    def delete(self, _id):
+        ret = tx.delete(_id)
+        if ret is not None:
+            return {'Deleted': ret}
+        else:
+            raise wz.NotFound(f'No such text: {_id}')
+
+
+TEXT_CREATE_FLDS = api.model('AddNewTextEntry', {
+    tx.TITLE: fields.String,
+    tx.TEXT: fields.String,
+    tx.EMAIL: fields.String,
+})
+
+
+@api.route(f'{TEXT_EP}/create')
+class TextCreate(Resource):
+    @api.response(HTTPStatus.OK, 'Success')
+    @api.response(HTTPStatus.NOT_ACCEPTABLE, 'Not acceptable')
+    @api.expect(TEXT_CREATE_FLDS)
+    def put(self):
+        try:
+            title = request.json.get(tx.TITLE)
+            text = request.json.get(tx.TEXT)
+            email = request.json.get(tx.EMAIL)
+            ret = tx.create(title, text, email)
+        except Exception as err:
+            raise wz.NotAcceptable(f'Could not add text: '
+                                   f'{err=}')
+        return {
+            MESSAGE: 'Text added!',
+            RETURN: ret,
+        }
+
+
+MASTHEAD = 'Masthead'
+
+
+@api.route(f'{PEOPLE_EP}/masthead')
+class Masthead(Resource):
+    """
+    Get a journal's masthead.
+    """
+    def get(self):
+        return {MASTHEAD: ppl.get_masthead()}

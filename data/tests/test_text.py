@@ -44,8 +44,14 @@ def test_delete():
 def test_create():
     text_data = txt.read()
     assert ADD_KEY not in text_data
-    txt.create(ADD_KEY, 'Add Page', 'This is a page to add.', 'mock_email')
+    txt.create('Add Page', 'This is a page to add.', 'mock_email')
+    text_data = txt.read()
+    assert ADD_KEY in text_data
 
+
+def test_create_duplicate():
+    with pytest.raises(ValueError):
+        txt.create('Add Page', 'This is a page to add.', 'mock_email')
 
 @pytest.mark.skip('Not completed')
 def test_update(temp_text):

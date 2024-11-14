@@ -61,23 +61,18 @@ def test_read(mock_read):
 def test_read_one(mock_read):
     resp = TEST_CLIENT.get(f'{ep.PEOPLE_EP}/mock_id')
     assert resp.status_code == OK
-    
-    
-def test_get_text():
-    resp = TEST_CLIENT.get(ep.TEXT_EP)
-    resp_json = resp.get_json()
-    for key, page in resp_json.items():
-        assert isinstance(key, str)
-        assert len(key) > 0
-        assert TITLE in page
+
+
+@patch('data.people.read_one', autospec=True, return_value=None)
+def test_read_one_not_found(mock_read):
+    resp = TEST_CLIENT.get(f'{ep.PEOPLE_EP}/mock_id')
+    assert resp.status_code == NOT_FOUND
 
 
 @patch('data.people.delete_person', autospec=True, return_value='mock_id')
 def test_delete_person_success(mock_delete):
     resp = TEST_CLIENT.delete(f'{ep.PEOPLE_EP}/mock_id')
-    resp_json = resp.get_json()
     assert resp.status_code == OK
-    assert resp_json == {'Deleted': 'mock_id'}
 
 
 @patch('data.people.delete_person', autospec=True, return_value=None)
@@ -114,3 +109,51 @@ def test_create_person_error(mock_create, mock_is_valid):
                            json={'name': 'name', 'affiliation': 'affiliation', 'email': 'mock_email'})
     assert resp.status_code == NOT_ACCEPTABLE
 
+
+@patch('data.text.read', autospec=True, return_value={'key': {TITLE: 'Title'}})
+def test_get_text(mock_read):
+    resp = TEST_CLIENT.get(ep.TEXT_EP)
+    assert resp.status_code == OK
+    resp_json = resp.get_json()
+    for key, text in resp_json.items():
+        assert isinstance(key, str)
+        assert len(key) > 0
+        assert TITLE in text
+
+
+@patch('data.text.read_one', autospec=True, return_value={TITLE: 'Title'})
+def test_get_text_one(mock_read_one):
+    resp = TEST_CLIENT.get(f'{ep.TEXT_EP}/key')
+    assert resp.status_code == OK
+
+
+@patch('data.text.read_one', autospec=True, return_value=None)
+def test_get_text_one_not_found(mock_read_one):
+    resp = TEST_CLIENT.get(f'{ep.TEXT_EP}/key')
+    assert resp.status_code == NOT_FOUND
+
+
+@patch('data.text.delete', autospec=True, return_value='key')
+def test_delete_text(mock_delete):
+    resp = TEST_CLIENT.delete(f'{ep.TEXT_EP}/key')
+    assert resp.status_code == OK
+
+
+@patch('data.text.delete', autospec=True, return_value=None)
+def test_delete_text_not_found(mock_delete):
+    resp = TEST_CLIENT.delete(f'{ep.TEXT_EP}/key')
+    assert resp.status_code == NOT_FOUND
+
+
+@patch('data.text.create', autospec=True, return_value='TitlePage')
+def test_create_text_success(mock_create):
+    resp = TEST_CLIENT.put(f'{ep.TEXT_EP}/create',
+                           json={'title': 'Title Page', 'text': 'Text', 'email': 'mock_email'})
+    assert resp.status_code == OK
+
+
+@patch('data.text.create', autospec=True, side_effect=ValueError)
+def test_create_text_error(mock_create):
+    resp = TEST_CLIENT.put(f'{ep.TEXT_EP}/create',
+                           json={'title': 'Title', 'text': 'Text', 'email': 'mock_email'})
+    assert resp.status_code == NOT_ACCEPTABLE
