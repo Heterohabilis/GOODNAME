@@ -121,32 +121,32 @@ class People(Resource):
         return ppl.read()
 
 
-@api.route(f'{PEOPLE_EP}/<_id>')
+@api.route(f'{PEOPLE_EP}/<email>')
 class Person(Resource):
     """
     This class handles creating, reading, updating and deleting a person.
     """
-    def get(self, _id):
+    def get(self, email):
         """
         Retrieve the journal person.
         """
-        person = ppl.read_one(_id)
+        person = ppl.read_one(email)
         if person:
             return person
         else:
-            raise wz.NotFound(f'No such record: {_id}')
+            raise wz.NotFound(f'No such record: {email}')
 
     @api.response(HTTPStatus.OK, 'Success.')
     @api.response(HTTPStatus.NOT_FOUND, 'No such person.')
-    def delete(self, _id):
+    def delete(self, email):
         """
         Delete the journal person.
         """
-        ret = ppl.delete_person(_id)
+        ret = ppl.delete_person(email)
         if ret is not None:
             return {'Deleted': ret}
         else:
-            raise wz.NotFound(f'No such person: {_id}')
+            raise wz.NotFound(f'No such person: {email}')
 
 
 PEOPLE_CREATE_FLDS = api.model('AddNewPeopleEntry', {
