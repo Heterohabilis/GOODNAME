@@ -69,13 +69,9 @@ def read_one(email: str) -> dict:
     return person
 
 
-def delete_person(_id):
-    people = read()
-    if _id in people:
-        del people[_id]
-        return _id
-    else:
-        return None
+def delete(email: str):
+    print(f'{EMAIL=}, {email=}')
+    return dbc.delete(PEOPLE_COLLECT, {EMAIL: email})
 
 
 def is_valid_person(name: str, affiliation: str, email: str,
