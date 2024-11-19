@@ -1,6 +1,7 @@
 import re
 
 import data.roles as rls
+import data.db_connect as dbc
 
 MIN_USER_NAME_LEN = 2
 NAME = 'name'
@@ -11,25 +12,30 @@ EMAIL = 'email'
 TEST_EMAIL = 'zl4490@nyu.edu'
 DEL_EMAIL = 'del@nyu.edu'
 
-people_dict = {
-    TEST_EMAIL: {
-        NAME: 'Elaine Li',
-        ROLES: [rls.AUTHOR_CODE],
-        AFFILIATION: 'NYU',
-        EMAIL: TEST_EMAIL
-    },
-    DEL_EMAIL: {
-        NAME: 'Cybercricetus',
-        ROLES: [rls.CE_CODE],
-        AFFILIATION: 'NYU',
-        EMAIL: DEL_EMAIL,
-    }
-}
+PEOPLE_COLLECT = 'people'
+
+# people_dict = {
+#     TEST_EMAIL: {
+#         NAME: 'Elaine Li',
+#         ROLES: [rls.AUTHOR_CODE],
+#         AFFILIATION: 'NYU',
+#         EMAIL: TEST_EMAIL
+#     },
+#     DEL_EMAIL: {
+#         NAME: 'Cybercricetus',
+#         ROLES: [rls.CE_CODE],
+#         AFFILIATION: 'NYU',
+#         EMAIL: DEL_EMAIL,
+#     }
+# }
 
 
 CHAR_OR_DIGIT = '[A-Za-z0-9]'
 UNDERSCORE_DASH_DOT = '[-_.]'
 CHAR = '[A-Za-z]'
+
+client = dbc.connect_db()
+print(f'{client=}')
 
 
 def is_valid_email(addr: str) -> bool:
@@ -39,8 +45,17 @@ def is_valid_email(addr: str) -> bool:
     return re.match(pattern, addr)
 
 
-def read():
-    return people_dict
+def read() -> dict:
+    """
+    Our contract:
+        - No arguments.
+        - Returns a dictionary of users keyed on user email.
+        - Each user email must be the key for another dictionary.
+    """
+    people = dbc.read_dict(PEOPLE_COLLECT, EMAIL)
+    print(f'{people=}')
+    return people
+    # return people_dict
 
 
 def read_one(email: str) -> dict:
@@ -48,7 +63,10 @@ def read_one(email: str) -> dict:
     Return a person record if email present in DB,
     else None.
     """
-    return people_dict.get(email)
+    filt = {EMAIL: email}
+    person = dbc.fetch_one(PEOPLE_COLLECT, filt)
+    print(f'{person=}')
+    return person
 
 
 def delete_person(_id):
@@ -79,14 +97,18 @@ def is_valid_person(name: str, affiliation: str, email: str,
 
 
 def create_person(name: str, affiliation: str, email: str, role: str):
-    if email in people_dict:
+    people = read()
+    if email in people:
         raise ValueError(f'Adding duplicate {email=}')
     if is_valid_person(name, affiliation, email, role=role):
         roles = []
         if role:
             roles.append(role)
-        people_dict[email] = {NAME: name, AFFILIATION: affiliation,
-                              EMAIL: email, ROLES: roles}
+        person = {NAME: name, AFFILIATION: affiliation,
+                  EMAIL: email, ROLES: roles}
+        print(f'{person=}')
+        dbc.create(PEOPLE_COLLECT, person)
+
         return email
 
 
@@ -132,11 +154,13 @@ def get_masthead() -> dict:
 
 
 def update(name: str, affiliation: str, email: str, roles: list):
-    if email not in people_dict:
+    people = read()
+    if email not in people:
         raise ValueError(f'Updating non-existent person: {email=}')
     if is_valid_person(name, affiliation, email, roles=roles):
-        people_dict[email] = {NAME: name, AFFILIATION: affiliation,
-                              EMAIL: email, ROLES: roles}
+        update_dict = {NAME: name, AFFILIATION: affiliation,
+                       ROLES: roles, EMAIL: email}
+        dbc.update_doc(PEOPLE_COLLECT, email, update_dict)
         return email
 
 
