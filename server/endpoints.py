@@ -142,7 +142,7 @@ class Person(Resource):
         """
         Delete the journal person.
         """
-        ret = ppl.delete_person(email)
+        ret = ppl.delete(email)
         if ret is not None:
             return {'Deleted': ret}
         else:
