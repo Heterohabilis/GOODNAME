@@ -33,13 +33,16 @@ TEMP_EMAIL = 'bvvdIsTrash@trash.bvvd'
 
 
 '''
-    If the db is empty, create the required instances.
+    Clear previous records that may be collapsed
+    Then create the required instances.
 '''
 ppl_dic = ppl.read()
-if ppl.DEL_EMAIL not in ppl_dic:
-    ppl.create(ppl.DEL_EMAIL, 'NYU', ppl.DEL_EMAIL, 'ED')
-if ppl.TEST_EMAIL not in ppl_dic:
-    ppl.create('Elaine Li', 'NYU', ppl.TEST_EMAIL, 'ED')
+if ppl.DEL_EMAIL in ppl_dic:
+    ppl.delete(ppl.DEL_EMAIL)
+ppl.create(ppl.DEL_EMAIL, 'NYU', ppl.DEL_EMAIL, 'ED')
+if ppl.TEST_EMAIL in ppl_dic:
+    ppl.delete(ppl.TEST_EMAIL)
+ppl.create('Elaine Li', 'NYU', ppl.TEST_EMAIL, 'ED')
 
 
 @pytest.fixture(scope='function')
