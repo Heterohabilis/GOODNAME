@@ -34,7 +34,7 @@ TEMP_EMAIL = 'bvvdIsTrash@trash.bvvd'
 
 @pytest.fixture(scope='function')
 def temp_person():
-    _id = ppl.create_person('Cybercricetus', 'BVVD', TEMP_EMAIL, TEST_ROLE_CODE)
+    _id = ppl.create('Cybercricetus', 'BVVD', TEMP_EMAIL, TEST_ROLE_CODE)
     yield _id
     ppl.delete(_id)
 
@@ -172,14 +172,14 @@ ADD_EMAIL = 'yuzuka@nyu.edu'
 def test_create_person():
     people = ppl.read()
     assert ADD_EMAIL not in people
-    ppl.create_person('Yuzuka Rao', 'NYU', ADD_EMAIL, TEST_ROLE_CODE)
+    ppl.create('Yuzuka Rao', 'NYU', ADD_EMAIL, TEST_ROLE_CODE)
     people = ppl.read()
     assert ADD_EMAIL in people
 
 
 def test_create_duplicate():
     with pytest.raises(ValueError):
-        ppl.create_person('Repeated Name', 'Affiliation', ppl.TEST_EMAIL, TEST_ROLE_CODE)
+        ppl.create('Repeated Name', 'Affiliation', ppl.TEST_EMAIL, TEST_ROLE_CODE)
 
 
 # def test_create_bad_email():
@@ -214,7 +214,7 @@ def test_update(temp_person):
 
 def test_create_bad_email():
     with pytest.raises(ValueError):
-        ppl.create_person('Do not care about name',
+        ppl.create('Do not care about name',
                    'Or affiliation', 'bademail', TEST_ROLE_CODE)
 
 
@@ -244,20 +244,6 @@ def test_fancy_is_valid_person():
         Test invalid, role list... this should also raise ValueError
         '''
         ppl.is_valid_person("bvvd", "Gaijin Inc", "bvvd@isTrash.com", None, TEST_ROLES_BVVD)
-
-
-@patch('data.people.read', return_value={'test@domain.com': {'name': 'Test User'}})
-def test_get_person_success(mock_read):
-    person = ppl.get_person('test@domain.com')
-    assert person == {'name': 'Test User'}
-    mock_read.assert_called_once()  
-
-
-@patch('data.people.read', return_value={})
-def test_get_person_not_found(mock_read):
-    person = ppl.get_person('nonexistent@domain.com')
-    assert person is None
-    mock_read.assert_called_once()
 
 
 @patch('data.roles.is_valid', return_value=False)

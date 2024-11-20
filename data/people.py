@@ -92,7 +92,7 @@ def is_valid_person(name: str, affiliation: str, email: str,
     return True
 
 
-def create_person(name: str, affiliation: str, email: str, role: str):
+def create(name: str, affiliation: str, email: str, role: str):
     people = read()
     if email in people:
         raise ValueError(f'Adding duplicate {email=}')
@@ -106,14 +106,6 @@ def create_person(name: str, affiliation: str, email: str, role: str):
         dbc.create(PEOPLE_COLLECT, person)
 
         return email
-
-
-def get_person(_id):
-    people = read()
-    if _id in people:
-        return people[_id]
-    else:
-        return None
 
 
 def set_affiliation(_id, affiliation: str) -> str:
@@ -150,7 +142,7 @@ def get_masthead() -> dict:
 
 
 def update(name: str, affiliation: str, email: str, roles: list):
-    people = read()
+    people = dbc.read_dict(PEOPLE_COLLECT, EMAIL)
     if email not in people:
         raise ValueError(f'Updating non-existent person: {email=}')
     if is_valid_person(name, affiliation, email, roles=roles):
