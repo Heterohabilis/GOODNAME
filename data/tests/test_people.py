@@ -39,6 +39,12 @@ def temp_person():
     ppl.delete(_id)
 
 
+@pytest.fixture(scope='function')
+def temp_person_for_test_del():
+    _id = ppl.create_person(ppl.DEL_EMAIL, 'NYU', ppl.DEL_EMAIL, 'ED')
+    yield _id
+
+
 def test_get_mh_fields():
     flds = ppl.get_mh_fields()
     assert isinstance(flds, list)
@@ -157,10 +163,10 @@ def test_read_one_not_there():
     assert ppl.read_one('Not an existing email!') is None
 
 
-def test_delete_person():
+def test_delete_person(temp_person_for_test_del):
     people = ppl.read()
     old_len = len(people)
-    ppl.delete_person(ppl.DEL_EMAIL)
+    ppl.delete(ppl.DEL_EMAIL)
     people = ppl.read()
     assert len(people) < old_len
     assert ppl.DEL_EMAIL not in people
@@ -175,6 +181,10 @@ def test_create_person():
     ppl.create_person('Yuzuka Rao', 'NYU', ADD_EMAIL, TEST_ROLE_CODE)
     people = ppl.read()
     assert ADD_EMAIL in people
+    '''
+        Make sure the tested email is cleaned.
+    '''
+    ppl.delete(ADD_EMAIL)
 
 
 def test_create_duplicate():
@@ -194,8 +204,10 @@ def test_set_affilation():
     people = ppl.read()
     old_aff = people[ppl.TEST_EMAIL][ppl.AFFILIATION]
     ppl.set_affiliation(ppl.TEST_EMAIL, TEST_AFF)
+    people = ppl.read()  # read new info
     assert old_aff != people[ppl.TEST_EMAIL][ppl.AFFILIATION]
     assert people[ppl.TEST_EMAIL][ppl.AFFILIATION] == TEST_AFF
+    ppl.set_affiliation(ppl.TEST_EMAIL, "NYU") # recover to original state
 
 
 def test_set_affilation_not_exist():

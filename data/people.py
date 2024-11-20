@@ -71,6 +71,8 @@ def read_one(email: str) -> dict:
 
 def delete(email: str):
     print(f'{EMAIL=}, {email=}')
+    people = read()
+    del people[email]
     return dbc.delete(PEOPLE_COLLECT, {EMAIL: email})
 
 
@@ -116,15 +118,6 @@ def get_person(_id):
         return None
 
 
-def set_affiliation(_id, affiliation: str) -> str:
-    people = read()
-    if _id in people:
-        people[_id][AFFILIATION] = affiliation
-        return people[_id][AFFILIATION]
-    else:
-        return None
-
-
 MH_FIELDS = [NAME, AFFILIATION]
 
 
@@ -156,8 +149,17 @@ def update(name: str, affiliation: str, email: str, roles: list):
     if is_valid_person(name, affiliation, email, roles=roles):
         update_dict = {NAME: name, AFFILIATION: affiliation,
                        ROLES: roles, EMAIL: email}
-        dbc.update_doc(PEOPLE_COLLECT, email, update_dict)
+        dbc.update_doc(PEOPLE_COLLECT, {EMAIL: email}, update_dict)
         return email
+
+
+def set_affiliation(_id, affiliation: str) -> str:
+    people = read()
+    if _id not in people:
+        return None
+    target = people[_id]
+    update(target[NAME], affiliation, target[EMAIL], target[ROLES])
+    return people[_id][AFFILIATION]
 
 
 def has_role(person: dict, role: str) -> bool:
