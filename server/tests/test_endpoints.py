@@ -69,13 +69,13 @@ def test_read_one_not_found(mock_read):
     assert resp.status_code == NOT_FOUND
 
 
-@patch('data.people.delete_person', autospec=True, return_value='mock_id')
+@patch('data.people.delete', autospec=True, return_value='mock_id')
 def test_delete_person_success(mock_delete):
     resp = TEST_CLIENT.delete(f'{ep.PEOPLE_EP}/mock_id')
     assert resp.status_code == OK
 
 
-@patch('data.people.delete_person', autospec=True, return_value=None)
+@patch('data.people.delete', autospec=True, return_value=None)
 def test_delete_person_not_there(mock_delete):
     resp = TEST_CLIENT.delete(f'{ep.PEOPLE_EP}/mock_id')
     assert resp.status_code == NOT_FOUND

@@ -4,6 +4,8 @@ from unittest.mock import patch
 
 import data.people as ppl
 
+import data.db_connect as dbc   
+
 from data.roles import TEST_CODE as TEST_ROLE_CODE
 
 
@@ -34,7 +36,7 @@ TEMP_EMAIL = 'bvvdIsTrash@trash.bvvd'
 def temp_person():
     _id = ppl.create_person('Cybercricetus', 'BVVD', TEMP_EMAIL, TEST_ROLE_CODE)
     yield _id
-    ppl.delete_person(_id)
+    ppl.delete(_id)
 
 
 def test_get_mh_fields():
