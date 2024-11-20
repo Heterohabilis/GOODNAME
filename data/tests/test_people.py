@@ -32,17 +32,21 @@ DOMAINENDWITHDASH = "elaine@nyu-.edu"
 TEMP_EMAIL = 'bvvdIsTrash@trash.bvvd'
 
 
+'''
+    If the db is empty, create the required instances.
+'''
+ppl_dic = ppl.read()
+if ppl.DEL_EMAIL not in ppl_dic:
+    ppl.create(ppl.DEL_EMAIL, 'NYU', ppl.DEL_EMAIL, 'ED')
+if ppl.TEST_EMAIL not in ppl_dic:
+    ppl.create('Elaine Li', 'NYU', ppl.TEST_EMAIL, 'ED')
+
+
 @pytest.fixture(scope='function')
 def temp_person():
     _id = ppl.create('Cybercricetus', 'BVVD', TEMP_EMAIL, TEST_ROLE_CODE)
     yield _id
     ppl.delete(_id)
-
-
-@pytest.fixture(scope='function')
-def temp_person_for_test_del():
-    _id = ppl.create(ppl.DEL_EMAIL, 'NYU', ppl.DEL_EMAIL, 'ED')
-    yield _id
 
 
 def test_get_mh_fields():
@@ -163,7 +167,7 @@ def test_read_one_not_there():
     assert ppl.read_one('Not an existing email!') is None
 
 
-def test_delete_person(temp_person_for_test_del):
+def test_delete_person():
     people = ppl.read()
     old_len = len(people)
     ppl.delete(ppl.DEL_EMAIL)
