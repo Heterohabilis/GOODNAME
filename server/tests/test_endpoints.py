@@ -81,7 +81,7 @@ def test_delete_person_not_there(mock_delete):
     assert resp.status_code == NOT_FOUND
 
 
-@patch('data.people.create_person', autospec=True, return_value='mock_email')
+@patch('data.people.create', autospec=True, return_value='mock_email')
 @patch('data.people.is_valid_email', autospec=True, return_value=True)
 def test_create_person_success(mock_create, mock_is_valid):
     resp = TEST_CLIENT.put(f'{ep.PEOPLE_EP}/create',
@@ -90,7 +90,7 @@ def test_create_person_success(mock_create, mock_is_valid):
     assert resp.json == {ep.MESSAGE: 'Person added!', ep.RETURN: 'mock_email'}
 
 
-@patch('data.people.create_person', autospec=True, return_value='mock_email')
+@patch('data.people.create', autospec=True, return_value='mock_email')
 @patch('data.people.is_valid_email', autospec=True, return_value=False)
 def test_create_person_invalid(mock_create, mock_is_valid):
     resp = TEST_CLIENT.put(f'{ep.PEOPLE_EP}/create',
@@ -102,7 +102,7 @@ def test_create_person_invalid(mock_create, mock_is_valid):
     }
 
 
-@patch('data.people.create_person', autospec=True, side_effect=ValueError)
+@patch('data.people.create', autospec=True, side_effect=ValueError)
 @patch('data.people.is_valid_email', autospec=True)
 def test_create_person_error(mock_create, mock_is_valid):
     resp = TEST_CLIENT.put(f'{ep.PEOPLE_EP}/create',
