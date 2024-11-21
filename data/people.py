@@ -63,10 +63,11 @@ def read_one(email: str) -> dict:
     Return a person record if email present in DB,
     else None.
     """
-    filt = {EMAIL: email}
-    person = dbc.fetch_one(PEOPLE_COLLECT, filt)
-    print(f'{person=}')
-    return person
+    return dbc.read_one(PEOPLE_COLLECT, {EMAIL: email})
+
+
+def exists(email: str) -> bool:
+    return read_one(email) is not None
 
 
 def delete(email: str):
@@ -95,8 +96,7 @@ def is_valid_person(name: str, affiliation: str, email: str,
 
 
 def create(name: str, affiliation: str, email: str, role: str):
-    people = read()
-    if email in people:
+    if exists(email):
         raise ValueError(f'Adding duplicate {email=}')
     if is_valid_person(name, affiliation, email, role=role):
         roles = []
@@ -113,9 +113,13 @@ def create(name: str, affiliation: str, email: str, role: str):
 MH_FIELDS = [NAME, AFFILIATION]
 
 
+def get_mh_fields(journal_code=None) -> list:
+    return MH_FIELDS
+
+
 def create_mh_rec(person: dict) -> dict:
     mh_rec = {}
-    for field in MH_FIELDS:
+    for field in get_mh_fields():
         mh_rec[field] = person.get(field, '')
     return mh_rec
 
@@ -141,7 +145,7 @@ def update(name: str, affiliation: str, email: str, roles: list):
     if is_valid_person(name, affiliation, email, roles=roles):
         update_dict = {NAME: name, AFFILIATION: affiliation,
                        ROLES: roles, EMAIL: email}
-        dbc.update_doc(PEOPLE_COLLECT, {EMAIL: email}, update_dict)
+        dbc.update(PEOPLE_COLLECT, {EMAIL: email}, update_dict)
         return email
 
 
@@ -158,10 +162,3 @@ def has_role(person: dict, role: str) -> bool:
     if role in person.get(ROLES):
         return True
     return False
-
-
-MH_FIELDS = [NAME, AFFILIATION]
-
-
-def get_mh_fields(journal_code=None) -> list:
-    return MH_FIELDS

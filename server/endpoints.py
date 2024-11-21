@@ -41,6 +41,7 @@ TEXT_EP = '/text'
 
 MESSAGE = "Message"
 RETURN = 'return'
+NAME = 'name'
 
 
 # Journal Retrieval class

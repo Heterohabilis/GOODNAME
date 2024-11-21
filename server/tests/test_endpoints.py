@@ -61,6 +61,7 @@ def test_read(mock_read):
 def test_read_one(mock_read):
     resp = TEST_CLIENT.get(f'{ep.PEOPLE_EP}/mock_id')
     assert resp.status_code == OK
+    assert resp.json == {ep.NAME: 'Yuzuka Rao'}
 
 
 @patch('data.people.read_one', autospec=True, return_value=None)
