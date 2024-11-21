@@ -121,6 +121,13 @@ class People(Resource):
         return ppl.read()
 
 
+PEOPLE_UPDATE_FLDS = api.model('UpdatePeopleEntry', {
+    ppl.NAME: fields.String,
+    ppl.AFFILIATION: fields.String,
+    ppl.ROLES: fields.List(fields.String),
+})
+
+
 @api.route(f'{PEOPLE_EP}/<email>')
 class Person(Resource):
     """
@@ -148,6 +155,27 @@ class Person(Resource):
         else:
             raise wz.NotFound(f'No such person: {email}')
 
+    @api.response(HTTPStatus.OK, 'Success')
+    @api.response(HTTPStatus.NOT_ACCEPTABLE, 'Not acceptable')
+    @api.expect(PEOPLE_UPDATE_FLDS)
+    def put(self, email):
+        """
+        Update the journal person.
+        """
+        try:
+            name = request.json.get(ppl.NAME)
+            affiliation = request.json.get(ppl.AFFILIATION)
+            role = request.json.get(ppl.ROLES)
+            print(f'{role=}')
+            ret = ppl.update(name, affiliation, email, role)
+        except Exception as err:
+            raise wz.NotAcceptable(f'Could not update person: '
+                                   f'{err=}')
+        return {
+            MESSAGE: 'Person updated!',
+            RETURN: ret,
+        }
+
 
 PEOPLE_CREATE_FLDS = api.model('AddNewPeopleEntry', {
     ppl.NAME: fields.String,
@@ -168,11 +196,6 @@ class PeopleCreate(Resource):
             affiliation = request.json.get(ppl.AFFILIATION)
             email = request.json.get(ppl.EMAIL)
             role = request.json.get(ppl.ROLES)
-            if not ppl.is_valid_email(email):
-                return {
-                    MESSAGE: 'Wrong Email Format',
-                    RETURN: None,
-                }
             ret = ppl.create(name, affiliation, email, role)
         except Exception as err:
             raise wz.NotAcceptable(f'Could not add person: '

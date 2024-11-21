@@ -81,6 +81,23 @@ def test_delete_person_not_there(mock_delete):
     assert resp.status_code == NOT_FOUND
 
 
+@patch('data.people.update', autospec=True, return_value='mock_email')
+@patch('data.people.is_valid_email', autospec=True, return_value=True)
+def test_update_person(mock_update, mock_is_valid):
+    resp = TEST_CLIENT.put(f'{ep.PEOPLE_EP}/mock_id',
+                            json={'name': 'name', 'affiliation': 'affiliation', 'roles': 'roles'})
+    assert resp.status_code == OK
+    assert resp.json == {ep.MESSAGE: 'Person updated!', ep.RETURN: 'mock_email'}
+
+
+@patch('data.people.update', autospec=True, side_effect=ValueError)
+@patch('data.people.is_valid_email', autospec=True)
+def test_update_person_error(mock_update, mock_is_valid):
+    resp = TEST_CLIENT.put(f'{ep.PEOPLE_EP}/mock_id',
+                            json={'name': 'name', 'affiliation': 'affiliation', 'roles': 'roles'})
+    assert resp.status_code == NOT_ACCEPTABLE
+
+
 @patch('data.people.create', autospec=True, return_value='mock_email')
 @patch('data.people.is_valid_email', autospec=True, return_value=True)
 def test_create_person_success(mock_create, mock_is_valid):
@@ -88,18 +105,6 @@ def test_create_person_success(mock_create, mock_is_valid):
                            json={'name': 'name', 'affiliation': 'affiliation', 'email': 'mock_email'})
     assert resp.status_code == OK
     assert resp.json == {ep.MESSAGE: 'Person added!', ep.RETURN: 'mock_email'}
-
-
-@patch('data.people.create', autospec=True, return_value='mock_email')
-@patch('data.people.is_valid_email', autospec=True, return_value=False)
-def test_create_person_invalid(mock_create, mock_is_valid):
-    resp = TEST_CLIENT.put(f'{ep.PEOPLE_EP}/create',
-                           json={'name': 'name', 'affiliation': 'affiliation', 'email': 'mock_email'})
-    assert resp.status_code == OK
-    assert resp.json == {
-        ep.MESSAGE: 'Wrong Email Format',
-        ep.RETURN: None
-    }
 
 
 @patch('data.people.create', autospec=True, side_effect=ValueError)
