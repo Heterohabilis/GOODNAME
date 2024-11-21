@@ -49,7 +49,10 @@ ppl.create('Elaine Li', 'NYU', ppl.TEST_EMAIL, 'ED')
 def temp_person():
     _id = ppl.create('Cybercricetus', 'BVVD', TEMP_EMAIL, TEST_ROLE_CODE)
     yield _id
-    ppl.delete(_id)
+    try:
+        ppl.delete(_id)
+    except:
+        print('Person already deleted.')
 
 
 def test_get_mh_fields():
@@ -153,7 +156,7 @@ def test_domain_end_with_dash():
     assert not ppl.is_valid_email(DOMAINENDWITHDASH)
 
 
-def test_read():
+def test_read(temp_person):
     people = ppl.read()
     assert isinstance(people, dict)
     assert len(people) > 0
@@ -170,33 +173,34 @@ def test_read_one_not_there():
     assert ppl.read_one('Not an existing email!') is None
 
 
-def test_delete_person():
-    people = ppl.read()
-    old_len = len(people)
-    ppl.delete(ppl.DEL_EMAIL)
-    people = ppl.read()
-    assert len(people) < old_len
-    assert ppl.DEL_EMAIL not in people
+def test_exists(temp_person):
+    assert ppl.exists(temp_person)
+
+
+def test_doesnt_exist():
+    assert not ppl.exists('Not an existing email.')
+
+
+def test_delete(temp_person):
+    ppl.delete(temp_person)
+    assert not ppl.exists(temp_person)
 
 
 ADD_EMAIL = 'yuzuka@nyu.edu'
 
 
 def test_create_person():
-    people = ppl.read()
-    assert ADD_EMAIL not in people
     ppl.create('Yuzuka Rao', 'NYU', ADD_EMAIL, TEST_ROLE_CODE)
-    people = ppl.read()
-    assert ADD_EMAIL in people
+    assert ppl.exists(ADD_EMAIL)
     '''
         Make sure the tested email is cleaned.
     '''
     ppl.delete(ADD_EMAIL)
 
 
-def test_create_duplicate():
+def test_create_duplicate(temp_person):
     with pytest.raises(ValueError):
-        ppl.create('Repeated Name', 'Affiliation', ppl.TEST_EMAIL, TEST_ROLE_CODE)
+        ppl.create('Repeated Name', 'Affiliation', temp_person, TEST_ROLE_CODE)
 
 
 # def test_create_bad_email():
@@ -226,9 +230,16 @@ def test_set_affilation_not_exist():
 VALID_ROLES = ['ED', 'AU']
 
 
-@pytest.mark.skip('Skipping cause not done.')
 def test_update(temp_person):
     ppl.update('Buffalo Bill', 'UBuffalo', temp_person, VALID_ROLES)
+    updated_rec = ppl.read_one(temp_person)
+    assert updated_rec[ppl.NAME] == 'Buffalo Bill'
+
+
+def test_update_not_there(temp_person):
+    with pytest.raises(ValueError):
+        ppl.update('Will Fail', 'University of the Void',
+                   'Non-existent email', VALID_ROLES)
 
 
 def test_create_bad_email():
