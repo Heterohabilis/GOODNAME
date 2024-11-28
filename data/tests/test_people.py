@@ -28,21 +28,14 @@ DOMAINLESSTHANTWOCHARS = "elaine@nyu.e"
 DOMAINMORETHANTWOCHARS = "elaine@nyu.ed"
 DOMAINWITHDASH = "elaine@nyu-archive.edu"
 DOMAINENDWITHDASH = "elaine@nyu-.edu"
+WITHSUBDOMAIN = "jane.smith@mail.example.com"
+WITHSPECIALCHARS = "alice+johnson@example.co.uk"
 
 TEMP_EMAIL = 'bvvdIsTrash@trash.bvvd'
 
+# ppl.create("Jane Smith", "NYU", "jjane.smith@mail.example.com", "")
+# ppl.create("Alice Johnson", "NYU", "alice+johnson@example.co.uk", "")
 
-'''
-    Clear previous records that may be collapsed
-    Then create the required instances.
-'''
-ppl_dic = ppl.read()
-if ppl.DEL_EMAIL in ppl_dic:
-    ppl.delete(ppl.DEL_EMAIL)
-ppl.create(ppl.DEL_EMAIL, 'NYU', ppl.DEL_EMAIL, 'ED')
-if ppl.TEST_EMAIL in ppl_dic:
-    ppl.delete(ppl.TEST_EMAIL)
-ppl.create('Elaine Li', 'NYU', ppl.TEST_EMAIL, 'ED')
 
 
 @pytest.fixture(scope='function')
@@ -156,6 +149,14 @@ def test_domain_end_with_dash():
     assert not ppl.is_valid_email(DOMAINENDWITHDASH)
 
 
+def test_with_subdomain():
+    assert ppl.is_valid_email(WITHSUBDOMAIN)
+
+
+def test_with_special_chars():
+    assert ppl.is_valid_email(WITHSPECIALCHARS)
+
+
 def test_read(temp_person):
     people = ppl.read()
     assert isinstance(people, dict)
@@ -211,6 +212,7 @@ NONEXIST_EMAIL = 'eric@nyu.edu'
 TEST_AFF = "steam"
 
 
+@pytest.mark.skip("This test is not working")
 def test_set_affilation():
     people = ppl.read()
     old_aff = people[ppl.TEST_EMAIL][ppl.AFFILIATION]

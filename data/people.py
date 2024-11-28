@@ -31,7 +31,7 @@ PEOPLE_COLLECT = 'people'
 
 
 CHAR_OR_DIGIT = '[A-Za-z0-9]'
-UNDERSCORE_DASH_DOT = '[-_.]'
+ALLOWED_CHARS = "[-_.+]"
 CHAR = '[A-Za-z]'
 
 client = dbc.connect_db()
@@ -39,8 +39,9 @@ print(f'{client=}')
 
 
 def is_valid_email(addr: str) -> bool:
-    prefix_pattern = f"{CHAR_OR_DIGIT}+{UNDERSCORE_DASH_DOT}?{CHAR_OR_DIGIT}+"
-    domain_pattern = f"@{CHAR_OR_DIGIT}+[-]?{CHAR_OR_DIGIT}+[.]{CHAR}{{2,}}"
+    prefix_pattern = f"{CHAR_OR_DIGIT}+{ALLOWED_CHARS}?{CHAR_OR_DIGIT}+"
+    domain_pattern = (f"@({CHAR_OR_DIGIT}+[-]?{CHAR_OR_DIGIT}+[.])*"
+                      f"{CHAR_OR_DIGIT}+[-]?{CHAR_OR_DIGIT}+[.]{CHAR}{{2,}}")
     pattern = f"^{prefix_pattern}{domain_pattern}$"
     return re.match(pattern, addr)
 
