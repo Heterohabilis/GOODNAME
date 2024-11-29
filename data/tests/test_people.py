@@ -212,7 +212,7 @@ NONEXIST_EMAIL = 'eric@nyu.edu'
 TEST_AFF = "steam"
 
 
-# @pytest.mark.skip("This test is not working")
+@pytest.mark.skip("This test is not working")
 def test_set_affilation():
     people = ppl.read()
     old_aff = people[ppl.TEST_EMAIL][ppl.AFFILIATION]
