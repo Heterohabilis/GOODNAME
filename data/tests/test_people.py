@@ -31,7 +31,7 @@ DOMAINENDWITHDASH = "elaine@nyu-.edu"
 WITHSUBDOMAIN = "jane.smith@mail.example.com"
 WITHSPECIALCHARS = "alice+johnson@example.co.uk"
 
-TEMP_EMAIL = 'bvvdIsTrash@trash.bvvd'
+TEMP_EMAIL = 'bvvdIsTrash@trasch.bvvd'
 
 # ppl.create("Jane Smith", "NYU", "jjane.smith@mail.example.com", "")
 # ppl.create("Alice Johnson", "NYU", "alice+johnson@example.co.uk", "")
@@ -212,15 +212,14 @@ NONEXIST_EMAIL = 'eric@nyu.edu'
 TEST_AFF = "steam"
 
 
-@pytest.mark.skip("This test is not working")
-def test_set_affilation():
-    people = ppl.read()
-    old_aff = people[ppl.TEST_EMAIL][ppl.AFFILIATION]
-    ppl.set_affiliation(ppl.TEST_EMAIL, TEST_AFF)
+# @pytest.mark.skip("This test is not working")
+def test_set_affilation(temp_person):
+    people = ppl.read_one(temp_person)
+    old_aff = people[ppl.AFFILIATION]
+    ppl.set_affiliation(TEMP_EMAIL, TEST_AFF)
     people = ppl.read()  # read new info
-    assert old_aff != people[ppl.TEST_EMAIL][ppl.AFFILIATION]
+    assert old_aff != people[TEMP_EMAIL][ppl.AFFILIATION]
     assert people[ppl.TEST_EMAIL][ppl.AFFILIATION] == TEST_AFF
-    ppl.set_affiliation(ppl.TEST_EMAIL, "NYU") # recover to original state
 
 
 def test_set_affilation_not_exist():
