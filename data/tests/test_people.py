@@ -219,7 +219,7 @@ def test_set_affilation(temp_person):
     ppl.set_affiliation(TEMP_EMAIL, TEST_AFF)
     people = ppl.read()  # read new info
     assert old_aff != people[TEMP_EMAIL][ppl.AFFILIATION]
-    assert people[ppl.TEST_EMAIL][ppl.AFFILIATION] == TEST_AFF
+    assert people[TEMP_EMAIL][ppl.AFFILIATION] == TEST_AFF
 
 
 def test_set_affilation_not_exist():
