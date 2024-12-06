@@ -5,6 +5,10 @@ COPY_EDIT = 'CED'
 IN_REF_REV = 'REV'
 REJECTED = 'REJ'
 SUBMITTED = 'SUB'
+EDITOR_REV = 'EDR'
+AUTHOR_REVISION = 'ARV'
+FORMATTING = 'FMT'
+PUBLISHED = 'PUB'
 TEST_STATE = SUBMITTED
 
 VALID_STATES = [
@@ -13,6 +17,10 @@ VALID_STATES = [
     IN_REF_REV,
     REJECTED,
     SUBMITTED,
+    EDITOR_REV,
+    AUTHOR_REVISION,
+    FORMATTING,
+    PUBLISHED,
 ]
 
 
@@ -35,6 +43,10 @@ ACCEPT = 'ACC'
 ASSIGN_REF = 'ARF'
 DONE = 'DON'
 REJECT = 'REJ'
+REMOVE_REF = 'RRF'
+SUBMIT_REVIEW = 'SBR'
+WITHDRAW = 'WDR'
+ACCEPT_WITH_REVISIONS = 'AWR'
 
 TEST_ACTION = ACCEPT
 
@@ -43,6 +55,10 @@ VALID_ACTIONS = [
     ASSIGN_REF,
     DONE,
     REJECT,
+    REMOVE_REF,
+    SUBMIT_REVIEW,
+    WITHDRAW,
+    ACCEPT_WITH_REVISIONS,
 ]
 
 
@@ -72,6 +88,29 @@ STATE_TABLE = {
         },
     },
     IN_REF_REV: {
+        ACCEPT: {
+            FUNC: lambda m: COPY_EDIT,
+        },
+        REJECT: {
+            FUNC: lambda m: REJECTED,
+        },
+        ACCEPT_WITH_REVISIONS: {
+            FUNC: lambda m: AUTHOR_REVISION,
+        },
+        REMOVE_REF: {
+            FUNC: lambda m: SUBMITTED,
+        },
+        SUBMIT_REVIEW: {
+            FUNC: lambda m: IN_REF_REV,
+        },
+        ASSIGN_REF: {
+            FUNC: lambda m: IN_REF_REV,
+        },
+    },
+    AUTHOR_REVISION: {
+        DONE: {
+            FUNC: lambda m: EDITOR_REV,
+        },
     },
     COPY_EDIT: {
         DONE: {
@@ -79,6 +118,21 @@ STATE_TABLE = {
         },
     },
     AUTHOR_REV: {
+        DONE: {
+            FUNC: lambda m: FORMATTING,
+        },
+    },
+    EDITOR_REV: {
+        ACCEPT: {
+            FUNC: lambda m: COPY_EDIT,
+        },
+    },
+    FORMATTING: {
+        DONE: {
+            FUNC: lambda m: PUBLISHED,
+        },
+    },
+    PUBLISHED: {
     },
     REJECTED: {
     },
