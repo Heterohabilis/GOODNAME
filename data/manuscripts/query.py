@@ -90,7 +90,6 @@ def delete_ref(manu: dict, ref: str) -> str:
         return SUBMITTED
 #--------------------------------------------------------------------
 
-
 FUNC = 'f'
 
 #----------------------------------------------
@@ -104,28 +103,28 @@ COMMON_ACTIONS = {
 STATE_TABLE = {
     SUBMITTED: {
         ASSIGN_REF: {
-            FUNC: assign_ref, #
+            FUNC: assign_ref,  #
         },
         REJECT: {
-            FUNC: lambda **kwargs: REJECTED, #
+            FUNC: lambda **kwargs: REJECTED,  #
         },
-        **COMMON_ACTIONS, #
+        **COMMON_ACTIONS,  #
     },
     IN_REF_REV: {
         ACCEPT: {
-            FUNC: lambda m: COPY_EDIT,
+            FUNC: lambda **kwargs: COPY_EDIT,
         },
         REJECT: {
-            FUNC: lambda m: REJECTED,
+            FUNC: lambda **kwargs: REJECTED,
         },
         ACCEPT_WITH_REVISIONS: {
-            FUNC: lambda m: AUTHOR_REVISION,
+            FUNC: lambda **kwargs: AUTHOR_REVISION,
         },
         REMOVE_REF: {
-            FUNC: lambda m: SUBMITTED,
+            FUNC: lambda **kwargs: SUBMITTED,
         },
         SUBMIT_REVIEW: {
-            FUNC: lambda m: IN_REF_REV,
+            FUNC: lambda **kwargs: IN_REF_REV,
         },
         # ------------------------------------------
         ASSIGN_REF: {
@@ -138,34 +137,31 @@ STATE_TABLE = {
     },
     AUTHOR_REVISION: {
         DONE: {
-            FUNC: lambda m: EDITOR_REV,
+            FUNC: lambda **kwargs: EDITOR_REV,
         },
     },
     COPY_EDIT: {
         DONE: {
-            FUNC: lambda **kwargs: AUTHOR_REV, #
+            FUNC: lambda **kwargs: AUTHOR_REV,  #
         },
-        **COMMON_ACTIONS,       #
+        **COMMON_ACTIONS,  #
     },
     AUTHOR_REV: {
-        DONE: {
-        **COMMON_ACTIONS,       #
-        },
+        **COMMON_ACTIONS,  #
     },
     EDITOR_REV: {
         ACCEPT: {
-            FUNC: lambda m: COPY_EDIT,
+            FUNC: lambda **kwargs: COPY_EDIT,
         },
     },
     FORMATTING: {
         DONE: {
-            FUNC: lambda m: PUBLISHED,
+            FUNC: lambda **kwargs: PUBLISHED,
         },
     },
-    PUBLISHED: {
-    },
+    PUBLISHED: {},
     REJECTED: {
-        **COMMON_ACTIONS,       #
+        **COMMON_ACTIONS,  #
     },
     # ----------------------------------
     WITHDRAWN: {
