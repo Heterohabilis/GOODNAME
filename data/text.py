@@ -1,85 +1,80 @@
 """
 This module interfaces to our user data.
 """
+import data.db_connect as dbc
 
 # fields
-KEY = 'key'
 TITLE = 'title'
 TEXT = 'text'
 EMAIL = 'email'
 
-TEST_KEY = 'HomePage'
-DEL_KEY = 'DeletePage'
-SUBM_KEY = 'SubmissonsPage'
+TEXT_COLLECT = 'text'
 
-text_dict = {
-    TEST_KEY: {
-        TITLE: 'Home Page',
-        TEXT: 'This is a journal about building API servers.',
-    },
-    DEL_KEY: {
-        TITLE: 'Home Page',
-        TEXT: 'This is a text to delete.',
-    },
-    SUBM_KEY: {
-        TITLE: 'Submissions Page',
-        TEXT: 'All submissions must be original work in Word format.',
-    }
-}
+TEST_title = 'HomePage'
+DEL_title = 'DeletePage'
+SUBM_title = 'SubmissonsPage'
+
+# text_dict = {
+#     TEST_title: {
+#         TITLE: 'Home Page',
+#         TEXT: 'This is a journal about building API servers.',
+#     },
+#     DEL_title: {
+#         TITLE: 'Home Page',
+#         TEXT: 'This is a text to delete.',
+#     },
+#     SUBM_title: {
+#         TITLE: 'Submissions Page',
+#         TEXT: 'All submissions must be original work in Word format.',
+#     }
+# }
+
+client = dbc.connect_db()
+print(f'{client=}')
+
+
+def exists(title):
+    return read_one(title) is not None
 
 
 def read():
     """
     Our contract:
         - No arguments.
-        - Returns a dictionary of users keyed on user email.
-        - Each user email must be the key for another dictionary.
+        - Returns a dictionary of users titleed on user email.
+        - Each user email must be the title for another dictionary.
     """
-    text = text_dict
+    text = dbc.read_dict(TEXT_COLLECT, TITLE)
     return text
 
 
-def read_one(key: str) -> dict:
-    # This should take a key and return the page dictionary
-    # for that key. Return an empty dictionary of key not found.
-    result = {}
-    if key in text_dict:
-        result = text_dict[key]
-    return result
+def read_one(title: str) -> dict:
+    # This should take a title and return the page dictionary
+    # for that title. Return an empty dictionary of title not found.
+    return dbc.read_one(TEXT_COLLECT, {TITLE: title})
 
 
-def delete(key):
-    # This should take a key and delete the page dictionary
-    # for that key. Return the key if it was deleted, else None.
-    if key in text_dict:
-        del text_dict[key]
-        return key
-    return None
+def delete(title):
+    return dbc.delete(TEXT_COLLECT, {TITLE: title})
 
 
 def create(title, text, email=None):
-    # This should take a key and create a new page dictionary
-    # for that key. Return the key if it was created, else None.
-    key = title.replace(' ', '')
-    if key in text_dict:
-        raise ValueError(f'Adding duplicate {key=}')
+    if exists(title):
+        raise ValueError('Page already exists!')
     if email:
-        text_dict[key] = {TITLE: title, TEXT: text, EMAIL: email}
+        new_page = {TITLE: title, TEXT: text, EMAIL: email}
     else:
-        text_dict[key] = {TITLE: title, TEXT: text}
-    return key
+        new_page = {TITLE: title, TEXT: text}
+    print(f'{new_page=}')
+    return dbc.create(TEXT_COLLECT, new_page)
 
 
-def update(key, title, text, email=None):
-    # This should take a key and update the page dictionary
-    # for that key. Return the key if it was updated, else None.
-    if key in text_dict:
-        if email:
-            text_dict[key] = {TITLE: title, TEXT: text, EMAIL: email}
-        else:
-            text_dict[key] = {TITLE: title, TEXT: text}
-        return key
-    return None
+def update(title, text, email=None):
+    if not exists(title):
+        raise ValueError('Page does not exist!')
+    dbc.update(TEXT_COLLECT, {TITLE: title},
+               {TITLE: title, TEXT: text, EMAIL: email})
+    return title
 
 
 def main():

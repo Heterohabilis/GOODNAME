@@ -4,14 +4,22 @@ import pytest
 
 import data.text as txt
 
-ADD_KEY = 'AddPage'
+ADD_TITLE = 'Add Page'
 
 
 @pytest.fixture(scope='function')
 def temp_text():
-    txt.create(ADD_KEY, 'This is a page to add.', 'mock_email')
-    yield ADD_KEY
-    txt.delete(ADD_KEY)
+    txt.create(ADD_TITLE, 'This is a page to add.', 'mock_email')
+    yield ADD_TITLE
+    txt.delete(ADD_TITLE)
+
+
+def test_exist(temp_text):
+    assert txt.exists(temp_text)
+
+
+def test_not_exist():
+    assert not txt.exists('Not a page key!')
 
 
 def test_read(temp_text):
@@ -24,33 +32,36 @@ def test_read(temp_text):
 
 
 def test_read_one(temp_text):
-    assert txt.read_one(temp_text) != {}
+    assert txt.read_one(temp_text) is not None
 
 
 def test_read_one_not_found():
-    assert txt.read_one('Not a page key!') == {}
+    assert txt.read_one('Not a page key!') is None
 
 
 def test_delete(temp_text):
-    assert txt.delete(temp_text) == temp_text
-    assert txt.read_one(temp_text) == {}
+    txt.delete(temp_text)
+    assert txt.read_one(temp_text) is None
 
 
 def test_create():
-    text_data = txt.read()
-    assert ADD_KEY not in text_data
-    txt.create('Add Page', 'This is a page to add.', 'mock_email')
-    text_data = txt.read()
-    assert ADD_KEY in text_data
-    txt.delete(ADD_KEY)
+    assert not txt.exists(ADD_TITLE)
+    txt.create(ADD_TITLE, 'This is a page to add.', 'mock_email')
+    assert txt.exists(ADD_TITLE)
+    txt.delete(ADD_TITLE)
 
 
 def test_create_duplicate(temp_text):
     with pytest.raises(ValueError):
-        txt.create(ADD_KEY, 'This is a page to add.', 'mock_email')
+        txt.create(ADD_TITLE, 'This is a page to add.', 'mock_email')
 
 
 def test_update(temp_text):
-    txt.update(ADD_KEY, 'Add Page', 'This is an updated page.', 'mock_email')
-    updated_text = txt.read_one(ADD_KEY)
+    txt.update(ADD_TITLE, 'This is an updated page.', 'mock_email')
+    updated_text = txt.read_one(temp_text)
     assert updated_text[txt.TEXT] == 'This is an updated page.'
+
+
+def test_update_not_found():
+    with pytest.raises(ValueError):
+        txt.update('Null Title', 'This is an updated page.', 'mock_email')

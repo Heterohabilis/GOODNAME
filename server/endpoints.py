@@ -286,7 +286,7 @@ class Text(Resource):
             title = request.json.get(tx.TITLE)
             text = request.json.get(tx.TEXT)
             email = request.json.get(tx.EMAIL)
-            ret = tx.update(_id, title, text, email)
+            ret = tx.update(title, text, email)
         except Exception as err:
             raise wz.NotAcceptable(f'Could not update text: '
                                    f'{err=}')
