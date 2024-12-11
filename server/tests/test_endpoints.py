@@ -151,6 +151,22 @@ def test_delete_text_not_found(mock_delete):
     assert resp.status_code == NOT_FOUND
 
 
+@patch('data.text.update', autospec=True, return_value='key')
+def test_update_text(mock_update):
+    resp = TEST_CLIENT.put(f'{ep.TEXT_EP}/key',
+                            json={'title': 'Title', 'text': 'Text', 'email': 'mock_email'})
+    assert resp.status_code == OK
+    assert resp.json == {ep.MESSAGE: 'Text updated!', ep.RETURN: 'key'}
+
+
+@patch('data.text.update', autospec=True, side_effect=ValueError)
+def test_update_text_error(mock_update):
+    resp = TEST_CLIENT.put(f'{ep.TEXT_EP}/key',
+                            json={'title': 'Title', 'Text': 'text', 'email': 'mock_email'})
+    assert resp.status_code == NOT_ACCEPTABLE
+
+
+
 @patch('data.text.create', autospec=True, return_value='TitlePage')
 def test_create_text_success(mock_create):
     resp = TEST_CLIENT.put(f'{ep.TEXT_EP}/create',

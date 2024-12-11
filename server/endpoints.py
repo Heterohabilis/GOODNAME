@@ -250,6 +250,13 @@ class Texts(Resource):
         return tx.read()
 
 
+TEXT_UPDATE_FLDS = api.model('UpdateTextEntry', {
+    tx.TITLE: fields.String,
+    tx.TEXT: fields.String,
+    tx.EMAIL: fields.String,
+})
+
+
 @api.route(f'{TEXT_EP}/<_id>')
 class Text(Resource):
     """
@@ -270,6 +277,23 @@ class Text(Resource):
             return {'Deleted': ret}
         else:
             raise wz.NotFound(f'No such text: {_id}')
+
+    @api.response(HTTPStatus.OK, 'Success')
+    @api.response(HTTPStatus.NOT_ACCEPTABLE, 'Not acceptable')
+    @api.expect(TEXT_UPDATE_FLDS)
+    def put(self, _id):
+        try:
+            title = request.json.get(tx.TITLE)
+            text = request.json.get(tx.TEXT)
+            email = request.json.get(tx.EMAIL)
+            ret = tx.update(_id, title, text, email)
+        except Exception as err:
+            raise wz.NotAcceptable(f'Could not update text: '
+                                   f'{err=}')
+        return {
+            MESSAGE: 'Text updated!',
+            RETURN: ret,
+        }
 
 
 TEXT_CREATE_FLDS = api.model('AddNewTextEntry', {
