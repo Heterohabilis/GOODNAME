@@ -20,12 +20,12 @@ def get_flds() -> dict:
 
 
 def get_fld_names() -> list:
-    return FIELDS.keys()
+    return list(FIELDS.keys())
 
 
 def get_disp_name(fld_nm: str) -> dict:
     fld = FIELDS.get(fld_nm, '')
-    return fld[DISP_NAME]  # should we use get() here?
+    return fld[DISP_NAME]
 
 
 def main():
