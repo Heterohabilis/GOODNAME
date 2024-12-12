@@ -66,7 +66,8 @@ def create(title, text, email=None):
     else:
         new_page = {TITLE: title, TEXT: text}
     print(f'{new_page=}')
-    return dbc.create(TEXT_COLLECT, new_page)
+    dbc.create(TEXT_COLLECT, new_page)
+    return title
 
 
 def update(title, text, email=None):
