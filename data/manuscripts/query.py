@@ -1,4 +1,11 @@
+import data.db_connect as dbc
 import data.manuscripts.field as flds
+
+
+MANUSCRIPT_COLLECT = 'manuscripts'
+
+client = dbc.connect_db()
+
 
 AUTHOR_REV = 'AUR'
 COPY_EDIT = 'CED'
@@ -120,9 +127,6 @@ STATE_TABLE = {
         ACCEPT_WITH_REVISIONS: {
             FUNC: lambda **kwargs: AUTHOR_REVISION,
         },
-        REMOVE_REF: {
-            FUNC: lambda **kwargs: SUBMITTED,
-        },
         SUBMIT_REVIEW: {
             FUNC: lambda **kwargs: IN_REF_REV,
         },
@@ -184,6 +188,24 @@ def handle_action(curr_state, action, **kwargs) -> str:
         raise ValueError(f'{action} not available in {curr_state}')
     return STATE_TABLE[curr_state][action][FUNC](**kwargs)
 
+
+# def read():
+#     """
+#     Our contract:
+#         - No arguments.
+#         - Returns a dictionary of manuscripts.
+#         - Each user email must be the title for another dictionary.
+#     """
+#     text = dbc.read_dict(MANUSCRIPT_COLLECT, TITLE)
+#     return text
+#
+#
+# def read_one(title: str) -> dict:
+#     return dbc.read_one(MANUSCRIPT_COLLECT, {TITLE: title})
+#
+#
+# def exists(title):
+#     return read_one(title) is not None
 
 def main():
     print(handle_action(SUBMITTED, ASSIGN_REF, SAMPLE_MANU))
