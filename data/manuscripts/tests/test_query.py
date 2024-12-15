@@ -62,3 +62,10 @@ def test_handle_action_valid_return():
                                            ref='Some ref')
             print(f'{new_state=}')
             assert mqry.is_valid_state(new_state)
+
+
+@pytest.fixture(scope='function')
+def temp_manu():
+    id_ = mqry.create("a", "b", "c", "d", "e", "g")
+    yield id_
+    mqry.delete(id_)

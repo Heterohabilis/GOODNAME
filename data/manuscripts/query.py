@@ -1,4 +1,7 @@
+from bson import ObjectId
+
 import data.db_connect as dbc
+
 import data.manuscripts.field as flds
 
 
@@ -189,23 +192,38 @@ def handle_action(curr_state, action, **kwargs) -> str:
     return STATE_TABLE[curr_state][action][FUNC](**kwargs)
 
 
-# def read():
-#     """
-#     Our contract:
-#         - No arguments.
-#         - Returns a dictionary of manuscripts.
-#         - Each user email must be the title for another dictionary.
-#     """
-#     text = dbc.read_dict(MANUSCRIPT_COLLECT, TITLE)
-#     return text
-#
-#
-# def read_one(_id) -> dict:
-#     return dbc.read_one(MANUSCRIPT_COLLECT, {_id})
+ID = "_id"
 
-#
-# def exists(title):
-#     return read_one(title) is not None
+
+def create_query(id: str)->dict:
+    return {ID: ObjectId(id)}
+
+
+def read_one(id: str) -> dict:
+    id_dic = create_query(id)
+    return dbc.read_one(MANUSCRIPT_COLLECT, id_dic)
+
+
+def exists(id: str):
+    return read_one(id) is not None
+
+
+def read():
+    text = dbc.read(MANUSCRIPT_COLLECT, dbc.SE_DB, True)
+    return text
+
+
+def delete(id: str):
+    return dbc.delete(MANUSCRIPT_COLLECT, create_query(id))
+
+
+def create(title: str, author: str, author_email: str, text: str, abstract: str, editor:str):
+    new_item = {flds.TITLE: title, flds.AUTHOR: author, flds.AUTHOR_EMAIL: author_email,
+                flds.STATE: SUBMITTED, flds.REFEREES: [], flds.TEXT: text,
+                flds.ABSTRACT: abstract, flds.HISTORY: [SUBMITTED], flds.EDITOR: editor}
+    result = dbc.create(MANUSCRIPT_COLLECT, new_item)
+    return result.inserted_id
+
 
 def main():
     print(handle_action(SUBMITTED, ASSIGN_REF, SAMPLE_MANU))
@@ -213,4 +231,7 @@ def main():
 
 
 if __name__ == '__main__':
-    main()
+    #main()
+    #idx = create("a", "b", "c", "d", "e", "g")
+    #delete('675e6b4f7a057d0f581d3dee')
+    print(read_one('675e6b4f7a057d0f581d3dee'))
