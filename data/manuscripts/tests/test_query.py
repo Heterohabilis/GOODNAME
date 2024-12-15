@@ -88,6 +88,23 @@ def test_create():
     mqry.delete(id_)
 
 
+def test_update(temp_manu):
+    updated_title, updated_author, updated_author_email, updated_text, updated_abstract, updated_editor= "a", "a", "a", "a", "a", "a"
+    mqry.update(temp_manu, updated_title, updated_author, updated_author_email, updated_text, updated_abstract, updated_editor)
+    updated_manu = mqry.read_one(temp_manu)
+    assert updated_manu[mqry.flds.TITLE] == updated_title
+    assert updated_manu[mqry.flds.AUTHOR] == updated_author
+    assert updated_manu[mqry.flds.AUTHOR_EMAIL] == updated_author_email
+    assert updated_manu[mqry.flds.TEXT] == updated_text
+    assert updated_manu[mqry.flds.ABSTRACT] == updated_abstract
+    assert updated_manu[mqry.flds.EDITOR] == updated_editor
+
+
+def test_update_failed():
+    with pytest.raises(ValueError):
+        mqry.update(TEST_ID, 'a', 'b', 'c', 'd', 'e', 'g')
+
+
 def test_delete(temp_manu):
     assert mqry.exists(temp_manu)
     ret = mqry.delete(temp_manu)
