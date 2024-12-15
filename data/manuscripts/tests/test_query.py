@@ -69,3 +69,44 @@ def temp_manu():
     id_ = mqry.create("a", "b", "c", "d", "e", "g")
     yield id_
     mqry.delete(id_)
+
+
+TEST_ID = '675e6b4f7a057d0f581d3dee'
+
+
+def test_exist(temp_manu):
+    assert mqry.exists(temp_manu)
+
+
+def test_not_exist():
+    assert not mqry.exists(TEST_ID)
+
+
+def test_create():
+    id_ = mqry.create("a", "b", "c", "d", "e", "g")
+    assert mqry.exists(id_)
+    mqry.delete(id_)
+
+
+def test_delete(temp_manu):
+    assert mqry.exists(temp_manu)
+    ret = mqry.delete(temp_manu)
+    assert ret
+
+
+def test_invalid_delete():
+    assert not mqry.exists(TEST_ID)
+    ret = mqry.delete(TEST_ID)
+    assert not ret
+
+
+def test_read(temp_manu):
+    assert len(mqry.read())>0
+
+
+def test_read_one(temp_manu):
+    assert mqry.read_one(temp_manu)
+
+
+def test_read_one_invalid():
+    assert not mqry.read_one(TEST_ID)
