@@ -200,9 +200,9 @@ def handle_action(curr_state, action, **kwargs) -> str:
 #     return text
 #
 #
-# def read_one(title: str) -> dict:
-#     return dbc.read_one(MANUSCRIPT_COLLECT, {TITLE: title})
-#
+# def read_one(_id) -> dict:
+#     return dbc.read_one(MANUSCRIPT_COLLECT, {_id})
+
 #
 # def exists(title):
 #     return read_one(title) is not None
