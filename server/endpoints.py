@@ -12,6 +12,7 @@ import werkzeug.exceptions as wz
 
 import data.people as ppl
 import data.text as tx
+import data.manuscripts.query as qy
 
 # import werkzeug.exceptions as wz
 
@@ -38,6 +39,7 @@ DATE_RESP = 'Date'
 DATE = '2024-10-01'
 PEOPLE_EP = '/people'
 TEXT_EP = '/text'
+MANU_EP = '/manuscript'
 
 MESSAGE = "Message"
 RETURN = 'return'
@@ -333,3 +335,95 @@ class Masthead(Resource):
     """
     def get(self):
         return {MASTHEAD: ppl.get_masthead()}
+
+
+@api.route(MANU_EP)
+class Manuscripts(Resource):
+    def get(self):
+        return qy.read()
+
+
+MANU_UPDATE_FLDS = api.model('UpdateTextEntry', {
+    qy.flds.TITLE: fields.String,
+    qy.flds.AUTHOR: fields.String,
+    qy.flds.AUTHOR_EMAIL: fields.String,
+    qy.flds.TEXT: fields.String,
+    qy.flds.ABSTRACT: fields.String,
+    qy.flds.EDITOR: fields.String,
+})
+
+
+@api.route(f'{MANU_EP}/<_id>')
+class Manuscript(Resource):
+    def get(self, _id):
+        manuscript = qy.read_one(_id)
+        if manuscript:
+            return manuscript
+        else:
+            raise wz.NotFound(f'No such record: {_id}')
+
+    @api.response(HTTPStatus.OK, 'Success.')
+    @api.response(HTTPStatus.NOT_FOUND, 'No such text.')
+    def delete(self, _id):
+        ret = qy.delete(_id)
+        if ret is not None:
+            return {'Deleted': ret}
+        else:
+            raise wz.NotFound(f'No such manuscript: {_id}')
+
+    @api.response(HTTPStatus.OK, 'Success')
+    @api.response(HTTPStatus.NOT_ACCEPTABLE, 'Not acceptable')
+    @api.expect(MANU_UPDATE_FLDS)
+    def put(self, _id):
+        try:
+            title = request.json.get(qy.flds.TITLE)
+            author = request.json.get(qy.flds.AUTHOR)
+            author_email = request.json.get(qy.flds.AUTHOR_EMAIL)
+            text = request.json.get(qy.flds.TEXT)
+            abstract = request.json.get(qy.flds.ABSTRACT)
+            editor = request.json.get(qy.flds.EDITOR)
+            ret = qy.update(
+                _id, title, author, author_email, text, abstract, editor
+            )
+        except Exception as err:
+            raise wz.NotAcceptable(f'Could not update manuscript: '
+                                   f'{err=}')
+        return {
+            MESSAGE: 'Manuscript updated!',
+            RETURN: ret,
+        }
+
+
+MANU_CREATE_FLDS = api.model('UpdateTextEntry', {
+    qy.flds.TITLE: fields.String,
+    qy.flds.AUTHOR: fields.String,
+    qy.flds.AUTHOR_EMAIL: fields.String,
+    qy.flds.TEXT: fields.String,
+    qy.flds.ABSTRACT: fields.String,
+    qy.flds.EDITOR: fields.String,
+})
+
+
+@api.route(f'{MANU_EP}/create')
+class ManuCreate(Resource):
+    @api.response(HTTPStatus.OK, 'Success')
+    @api.response(HTTPStatus.NOT_ACCEPTABLE, 'Not acceptable')
+    @api.expect(MANU_CREATE_FLDS)
+    def put(self):
+        try:
+            title = request.json.get(qy.flds.TITLE)
+            author = request.json.get(qy.flds.AUTHOR)
+            author_email = request.json.get(qy.flds.AUTHOR_EMAIL)
+            text = request.json.get(qy.flds.TEXT)
+            abstract = request.json.get(qy.flds.ABSTRACT)
+            editor = request.json.get(qy.flds.EDITOR)
+            ret = qy.create(
+                title, author, author_email, text, abstract, editor
+            )
+        except Exception as err:
+            raise wz.NotAcceptable(f'Could not add text: '
+                                   f'{err=}')
+        return {
+            MESSAGE: 'Manuscript added!',
+            RETURN: ret,
+        }
