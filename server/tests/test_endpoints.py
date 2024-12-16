@@ -188,3 +188,88 @@ def test_update_state(mock_update_state):
                            json={'action': action})
     assert resp.status_code == OK
     assert resp.json['return'] == 'mock_state'
+
+
+
+@patch('data.manuscripts.query.read_one', autospec=True, return_value={'id': 'mock_id', 'title': 'Mock Title'})
+def test_get_manuscript_success(mock_read_one):
+    resp = TEST_CLIENT.get(f'{ep.MANU_EP}/mock_id')
+    assert resp.status_code == OK
+    assert resp.json == {'id': 'mock_id', 'title': 'Mock Title'}
+
+
+@patch('data.manuscripts.query.read_one', autospec=True, return_value=None)
+def test_get_manuscript_not_found(mock_read_one):
+    resp = TEST_CLIENT.get(f'{ep.MANU_EP}/mock_id')
+    assert resp.status_code == NOT_FOUND
+
+
+@patch('data.manuscripts.query.delete', autospec=True, return_value='mock_id')
+def test_delete_manuscript_success(mock_delete):
+    resp = TEST_CLIENT.delete(f'{ep.MANU_EP}/mock_id')
+    assert resp.status_code == OK
+    assert resp.json == {'Deleted': 'mock_id'}
+
+
+@patch('data.manuscripts.query.delete', autospec=True, return_value=None)
+def test_delete_manuscript_not_found(mock_delete):
+    resp = TEST_CLIENT.delete(f'{ep.MANU_EP}/mock_id')
+    assert resp.status_code == NOT_FOUND
+
+
+@patch('data.manuscripts.query.update', autospec=True, return_value='mock_return')
+def test_put_manuscript_success(mock_update):
+    payload = {
+        'title': 'Updated Title',
+        'author': 'Updated Author',
+        'author_email': 'email@example.com',
+        'text': 'Updated Text',
+        'abstract': 'Updated Abstract',
+        'editor': 'Updated Editor'
+    }
+    resp = TEST_CLIENT.put(f'{ep.MANU_EP}/mock_id', json=payload)
+    assert resp.status_code == OK
+    assert resp.json == {'Message': 'Manuscript updated!', 'return': 'mock_return'}
+
+
+@patch('data.manuscripts.query.update', autospec=True, side_effect=Exception('Update error'))
+def test_put_manuscript_error(mock_update):
+    payload = {
+        'title': 'Title',
+        'author': 'Author',
+        'author_email': 'email@example.com',
+        'text': 'Text',
+        'abstract': 'Abstract',
+        'editor': 'Editor'
+    }
+    resp = TEST_CLIENT.put(f'{ep.MANU_EP}/mock_id', json=payload)
+    assert resp.status_code == NOT_ACCEPTABLE
+
+
+@patch('data.manuscripts.query.create', autospec=True, return_value='new_manuscript_id')
+def test_create_manuscript_success(mock_create):
+    payload = {
+        'title': 'New Title',
+        'author': 'New Author',
+        'author_email': 'email@example.com',
+        'text': 'New Text',
+        'abstract': 'New Abstract',
+        'editor': 'New Editor'
+    }
+    resp = TEST_CLIENT.put(f'{ep.MANU_EP}/create', json=payload)
+    assert resp.status_code == OK
+    assert resp.json == {'Message': 'Manuscript added!', 'return': 'new_manuscript_id'}
+
+
+@patch('data.manuscripts.query.create', autospec=True, side_effect=Exception('Creation error'))
+def test_create_manuscript_error(mock_create):
+    payload = {
+        'title': 'Title',
+        'author': 'Author',
+        'author_email': 'email@example.com',
+        'text': 'Text',
+        'abstract': 'Abstract',
+        'editor': 'Editor'
+    }
+    resp = TEST_CLIENT.put(f'{ep.MANU_EP}/create', json=payload)
+    assert resp.status_code == NOT_ACCEPTABLE

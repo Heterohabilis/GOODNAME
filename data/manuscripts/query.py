@@ -18,6 +18,7 @@ EDITOR_REV = 'EDR'
 AUTHOR_REVISION = 'ARV'
 FORMATTING = 'FMT'
 PUBLISHED = 'PUB'
+ACTION = 'ACT'
 TEST_STATE = SUBMITTED
 
 VALID_STATES = [
@@ -224,7 +225,7 @@ def create(title: str, author: str, author_email: str, text: str, abstract: str,
                 flds.STATE: SUBMITTED, flds.REFEREES: [], flds.TEXT: text,
                 flds.ABSTRACT: abstract, flds.HISTORY: [SUBMITTED], flds.EDITOR: editor}
     result = dbc.create(MANUSCRIPT_COLLECT, new_item)
-    return result.inserted_id
+    return str(result.inserted_id)
 
 
 def update(_id: str, title: str, author: str, author_email: str, text: str, abstract: str, editor: str):
@@ -233,7 +234,7 @@ def update(_id: str, title: str, author: str, author_email: str, text: str, abst
     update_dict = {flds.TITLE: title, flds.AUTHOR: author, flds.AUTHOR_EMAIL: author_email,
                    flds.STATE: SUBMITTED, flds.REFEREES: [], flds.TEXT: text,
                    flds.ABSTRACT: abstract, flds.HISTORY: [SUBMITTED], flds.EDITOR: editor}
-    dbc.update(MANUSCRIPT_COLLECT, {ID: _id}, update_dict)
+    dbc.update(MANUSCRIPT_COLLECT, create_query(_id), update_dict)
     return _id
 
 

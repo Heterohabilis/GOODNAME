@@ -429,11 +429,17 @@ class ManuCreate(Resource):
         }
 
 
+UPDATE_ENTRY = api.model('UpdateTextEntry', {
+    qy.ACTION: fields.String,
+})
+
+
 @api.route(f'{MANU_EP}/<_id>/update_state')
+@api.expect(MANU_UPDATE_FLDS)
 class ManuUpdateState(Resource):
     def put(self, _id):
         try:
-            action = request.json.get('action')
+            action = request.json.get(qy.ACTION)
             ret = qy.update_state(_id, action)
         except Exception as err:
             raise wz.NotAcceptable(f'Could not update state: '
