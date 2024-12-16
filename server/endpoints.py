@@ -427,3 +427,18 @@ class ManuCreate(Resource):
             MESSAGE: 'Manuscript added!',
             RETURN: ret,
         }
+
+
+@api.route(f'{MANU_EP}/<_id>/update_state')
+class ManuUpdateState(Resource):
+    def put(self, _id):
+        try:
+            action = request.json.get('action')
+            ret = qy.update_state(_id, action)
+        except Exception as err:
+            raise wz.NotAcceptable(f'Could not update state: '
+                                   f'{err=}')
+        return {
+            MESSAGE: 'Manuscript state updated!',
+            RETURN: ret,
+        }
