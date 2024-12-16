@@ -4,18 +4,16 @@ import data.db_connect as dbc
 
 import data.manuscripts.field as flds
 
-
 MANUSCRIPT_COLLECT = 'manuscripts'
 
 client = dbc.connect_db()
-
 
 AUTHOR_REV = 'AUR'
 COPY_EDIT = 'CED'
 IN_REF_REV = 'REV'
 REJECTED = 'REJ'
 SUBMITTED = 'SUB'
-WITHDRAWN = 'WIT'    #
+WITHDRAWN = 'WIT'  #
 EDITOR_REV = 'EDR'
 AUTHOR_REVISION = 'ARV'
 FORMATTING = 'FMT'
@@ -32,9 +30,8 @@ VALID_STATES = [
     AUTHOR_REVISION,
     FORMATTING,
     PUBLISHED,
-    WITHDRAWN,      #
+    WITHDRAWN,  #
 ]
-
 
 SAMPLE_MANU = {
     flds.TITLE: 'Short module import names in Python',
@@ -56,7 +53,7 @@ ASSIGN_REF = 'ARF'
 DELETE_REF = 'DRF'  #
 DONE = 'DON'
 REJECT = 'REJ'
-WITHDRAW = 'WIT'    #
+WITHDRAW = 'WIT'  #
 REMOVE_REF = 'RRF'
 SUBMIT_REVIEW = 'SBR'
 ACCEPT_WITH_REVISIONS = 'AWR'
@@ -66,7 +63,7 @@ TEST_ACTION = ACCEPT
 VALID_ACTIONS = [
     ACCEPT,
     ASSIGN_REF,
-    DELETE_REF,     #
+    DELETE_REF,  #
     DONE,
     REJECT,
     REMOVE_REF,
@@ -98,6 +95,8 @@ def delete_ref(manu: dict, ref: str) -> str:
         return IN_REF_REV
     else:
         return SUBMITTED
+
+
 #--------------------------------------------------------------------
 
 FUNC = 'f'
@@ -154,6 +153,9 @@ STATE_TABLE = {
         **COMMON_ACTIONS,  #
     },
     AUTHOR_REV: {
+        DONE: {
+            FUNC: lambda **kwargs: FORMATTING,
+        },
         **COMMON_ACTIONS,  #
     },
     EDITOR_REV: {
@@ -195,7 +197,7 @@ def handle_action(curr_state, action, **kwargs) -> str:
 ID = "_id"
 
 
-def create_query(id: str)->dict:
+def create_query(id: str) -> dict:
     return {ID: ObjectId(id)}
 
 
@@ -217,7 +219,7 @@ def delete(id: str):
     return dbc.delete(MANUSCRIPT_COLLECT, create_query(id))
 
 
-def create(title: str, author: str, author_email: str, text: str, abstract: str, editor:str):
+def create(title: str, author: str, author_email: str, text: str, abstract: str, editor: str):
     new_item = {flds.TITLE: title, flds.AUTHOR: author, flds.AUTHOR_EMAIL: author_email,
                 flds.STATE: SUBMITTED, flds.REFEREES: [], flds.TEXT: text,
                 flds.ABSTRACT: abstract, flds.HISTORY: [SUBMITTED], flds.EDITOR: editor}
@@ -229,19 +231,38 @@ def update(id: str, title: str, author: str, author_email: str, text: str, abstr
     if not exists(id):
         raise ValueError('Manuscript not exist')
     update_dict = {flds.TITLE: title, flds.AUTHOR: author, flds.AUTHOR_EMAIL: author_email,
-                flds.STATE: SUBMITTED, flds.REFEREES: [], flds.TEXT: text,
-                flds.ABSTRACT: abstract, flds.HISTORY: [SUBMITTED], flds.EDITOR: editor}
-    dbc.update(MANUSCRIPT_COLLECT,{ID: id}, update_dict)
+                   flds.STATE: SUBMITTED, flds.REFEREES: [], flds.TEXT: text,
+                   flds.ABSTRACT: abstract, flds.HISTORY: [SUBMITTED], flds.EDITOR: editor}
+    dbc.update(MANUSCRIPT_COLLECT, {ID: id}, update_dict)
     return id
 
 
 def main():
-    print(handle_action(SUBMITTED, ASSIGN_REF, SAMPLE_MANU))
-    print(handle_action(SUBMITTED, REJECT, SAMPLE_MANU))
+    print(handle_action(SUBMITTED, ASSIGN_REF,
+                        manu=SAMPLE_MANU, ref='Jack'))
+    print(handle_action(SUBMITTED, WITHDRAW, manu=SAMPLE_MANU))
+    print(handle_action(SUBMITTED, REJECT, manu=SAMPLE_MANU))
+
+    print(handle_action(IN_REF_REV, ASSIGN_REF, manu=SAMPLE_MANU,
+                        ref='Jill', extra='Extra!'))
+    print(handle_action(IN_REF_REV, DELETE_REF, manu=SAMPLE_MANU,
+                        ref='Jill'))
+    print(handle_action(IN_REF_REV, DELETE_REF, manu=SAMPLE_MANU,
+                        ref='Jack'))
+    print(handle_action(IN_REF_REV, ACCEPT, manu=SAMPLE_MANU))
+    print(handle_action(IN_REF_REV, ACCEPT_WITH_REVISIONS, manu=SAMPLE_MANU))
+    print(handle_action(IN_REF_REV, SUBMIT_REVIEW, manu=SAMPLE_MANU))
+    print(handle_action(IN_REF_REV, WITHDRAW, manu=SAMPLE_MANU))
+
+    print(handle_action(AUTHOR_REVISION, DONE, manu=SAMPLE_MANU))
+    print(handle_action(EDITOR_REV, ACCEPT, manu=SAMPLE_MANU))
+    print(handle_action(COPY_EDIT, DONE, manu=SAMPLE_MANU))
+    print(handle_action(AUTHOR_REV, DONE, manu=SAMPLE_MANU))
+    print(handle_action(FORMATTING, DONE, manu=SAMPLE_MANU))
 
 
 if __name__ == '__main__':
-    #main()
+    main()
     #idx = create("a", "b", "c", "d", "e", "g")
     #delete('675e6b4f7a057d0f581d3dee')
     print(read_one('675e6b4f7a057d0f581d3dee'))
