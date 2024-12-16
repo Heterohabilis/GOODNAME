@@ -127,3 +127,31 @@ def test_read_one(temp_manu):
 
 def test_read_one_invalid():
     assert not mqry.read_one(TEST_ID)
+
+
+def test_assign_ref(temp_manu):
+    ref = "Reviewer1"
+    manu = mqry.read_one(temp_manu)
+    new_state = mqry.assign_ref(manu, ref)
+    assert new_state == mqry.IN_REF_REV
+    assert ref in manu[mqry.flds.REFEREES]
+
+
+def test_delete_ref(temp_manu):
+    ref = "Reviewer1"
+    manu = mqry.read_one(temp_manu)
+    mqry.assign_ref(manu, ref)
+    new_state = mqry.delete_ref(manu, ref)
+    assert new_state == mqry.SUBMITTED
+    assert ref not in manu[mqry.flds.REFEREES]
+
+
+def test_delete_ref_with_multiple_refs(temp_manu):
+    refs = ["Reviewer1", "Reviewer2"]
+    manu = mqry.read_one(temp_manu)
+    for ref in refs:
+        mqry.assign_ref(manu, ref)
+    new_state = mqry.delete_ref(manu, "Reviewer1")
+    assert new_state == mqry.IN_REF_REV
+    assert "Reviewer1" not in manu[mqry.flds.REFEREES]
+    assert "Reviewer2" in manu[mqry.flds.REFEREES]
