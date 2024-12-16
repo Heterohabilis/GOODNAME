@@ -227,14 +227,14 @@ def create(title: str, author: str, author_email: str, text: str, abstract: str,
     return result.inserted_id
 
 
-def update(id: str, title: str, author: str, author_email: str, text: str, abstract: str, editor: str):
-    if not exists(id):
+def update(_id: str, title: str, author: str, author_email: str, text: str, abstract: str, editor: str):
+    if not exists(_id):
         raise ValueError('Manuscript not exist')
     update_dict = {flds.TITLE: title, flds.AUTHOR: author, flds.AUTHOR_EMAIL: author_email,
                    flds.STATE: SUBMITTED, flds.REFEREES: [], flds.TEXT: text,
                    flds.ABSTRACT: abstract, flds.HISTORY: [SUBMITTED], flds.EDITOR: editor}
-    dbc.update(MANUSCRIPT_COLLECT, {ID: id}, update_dict)
-    return id
+    dbc.update(MANUSCRIPT_COLLECT, {ID: _id}, update_dict)
+    return _id
 
 
 def main():
