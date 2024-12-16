@@ -155,3 +155,8 @@ def test_delete_ref_with_multiple_refs(temp_manu):
     assert new_state == mqry.IN_REF_REV
     assert "Reviewer1" not in manu[mqry.flds.REFEREES]
     assert "Reviewer2" in manu[mqry.flds.REFEREES]
+
+
+def test_update_state(temp_manu):
+    new_state = mqry.update_state(temp_manu, mqry.ASSIGN_REF, ref='Alice')
+    assert new_state == mqry.IN_REF_REV
