@@ -343,7 +343,7 @@ class Manuscripts(Resource):
         return qy.read()
 
 
-MANU_UPDATE_FLDS = api.model('UpdateTextEntry', {
+MANU_UPDATE_FLDS = api.model('UpdateManuEntry', {
     qy.flds.TITLE: fields.String,
     qy.flds.AUTHOR: fields.String,
     qy.flds.AUTHOR_EMAIL: fields.String,
@@ -394,7 +394,7 @@ class Manuscript(Resource):
         }
 
 
-MANU_CREATE_FLDS = api.model('UpdateTextEntry', {
+MANU_CREATE_FLDS = api.model('CreateManuEntry', {
     qy.flds.TITLE: fields.String,
     qy.flds.AUTHOR: fields.String,
     qy.flds.AUTHOR_EMAIL: fields.String,
@@ -429,13 +429,13 @@ class ManuCreate(Resource):
         }
 
 
-UPDATE_ENTRY = api.model('UpdateTextEntry', {
+UPDATE_ENTRY = api.model('UpdateActionEntry', {
     qy.ACTION: fields.String,
 })
 
 
 @api.route(f'{MANU_EP}/<_id>/update_state')
-@api.expect(MANU_UPDATE_FLDS)
+@api.expect(UPDATE_ENTRY)
 class ManuUpdateState(Resource):
     def put(self, _id):
         try:
