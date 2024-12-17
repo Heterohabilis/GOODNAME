@@ -32,7 +32,10 @@ def connect_db():
             client = pm.MongoClient(f'mongodb+srv://xm2204:{password}'
                                     + '@goodname-cluster.j9w1b.mongodb.net/?'
                                     + 'retryWrites=true&w=majority&appName'
-                                    + '=GOODNAME-Cluster')
+                                    + '=GOODNAME-Cluster',
+                                    tls=True, tlsAllowInvalidCertificates=True,
+                                    connect=True,
+                                    maxPoolSize=1)
         else:
             print("Connecting to Mongo locally.")
             client = pm.MongoClient()
