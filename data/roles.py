@@ -17,7 +17,7 @@ ROLES = {
     'RE': 'Referee',
 }
 
-MH_ROLES = [CE_CODE, ME_CODE, ED_CODE]
+MH_ROLES = [AUTHOR_CODE, CE_CODE, ME_CODE, ED_CODE]
 
 
 def get_roles() -> dict:
