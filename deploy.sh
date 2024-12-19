@@ -2,7 +2,7 @@
 # This shell script deploys a new version to a server.
 
 PROJ_DIR=GOODNAME
-VENV=myvirtualenv
+VENV=Fall2023
 PA_DOMAIN="znElaine.pythonanywhere.com"
 PA_USER='znElaine'
 echo "Project dir = $PROJ_DIR"
