@@ -52,3 +52,4 @@ jobs:
         run: ./deploy.sh
         env:
           DEMO_PA_PWD: ${{secrets.DEMO_PA_PWD}}
+          PA_USER: ${{ secrets.PA_USER }}
