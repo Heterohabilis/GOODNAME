@@ -3,8 +3,8 @@
 
 PROJ_DIR=demo-repo4
 VENV=Fall2023
-PA_DOMAIN="Fall2023.pythonanywhere.com"
-PA_USER='Fall2023'
+PA_DOMAIN="znElaine.pythonanywhere.com"
+PA_USER='znElaine'
 echo "Project dir = $PROJ_DIR"
 echo "PA domain = $PA_DOMAIN"
 echo "Virtual env = $VENV"
