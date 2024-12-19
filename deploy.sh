@@ -1,7 +1,7 @@
 #!/bin/bash
 # This shell script deploys a new version to a server.
 
-PROJ_DIR=demo-repo4
+PROJ_DIR=GOODNAME
 VENV=Fall2023
 PA_DOMAIN="znElaine.pythonanywhere.com"
 PA_USER='znElaine'
