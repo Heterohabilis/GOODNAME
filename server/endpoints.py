@@ -253,7 +253,6 @@ class Texts(Resource):
 
 
 TEXT_UPDATE_FLDS = api.model('UpdateTextEntry', {
-    tx.TITLE: fields.String,
     tx.TEXT: fields.String,
     tx.EMAIL: fields.String,
 })
@@ -285,7 +284,7 @@ class Text(Resource):
     @api.expect(TEXT_UPDATE_FLDS)
     def put(self, _id):
         try:
-            title = request.json.get(tx.TITLE)
+            title = _id
             text = request.json.get(tx.TEXT)
             email = request.json.get(tx.EMAIL)
             ret = tx.update(title, text, email)
