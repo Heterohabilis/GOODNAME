@@ -355,8 +355,8 @@ MANU_UPDATE_FLDS = api.model('UpdateManuEntry', {
 @api.route(f'{MANU_EP}/<_id>')
 class Manuscript(Resource):
     """
-        This class handles creating, reading, updating and deleting a manuscript.
-        """
+    This class handles creating, reading, updating and deleting a manuscript.
+    """
     def get(self, _id):
         manuscript = qy.read_one(_id)
         if manuscript:
