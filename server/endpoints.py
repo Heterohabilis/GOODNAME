@@ -408,6 +408,9 @@ MANU_CREATE_FLDS = api.model('CreateManuEntry', {
 
 @api.route(f'{MANU_EP}/create')
 class ManuCreate(Resource):
+    '''
+    This class handles creating a manuscript
+    '''
     @api.response(HTTPStatus.OK, 'Success')
     @api.response(HTTPStatus.NOT_ACCEPTABLE, 'Not acceptable')
     @api.expect(MANU_CREATE_FLDS)
