@@ -34,7 +34,7 @@ def connect_db():
                                     + 'retryWrites=true&w=majority&appName'
                                     + '=GOODNAME-Cluster',
                                     tls=True,
-                                    tlsCAFile=None,
+                                    tlsAllowInvalidCertificates=True,
                                     connect=True,
                                     maxPoolSize=1)
         else:
