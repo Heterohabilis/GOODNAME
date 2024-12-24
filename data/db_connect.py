@@ -35,8 +35,6 @@ def connect_db():
                                     + '=GOODNAME-Cluster',
                                     tls=True,
                                     tlsAllowInvalidCertificates=True,
-                                    connectTimeoutMS=30000,
-                                    socketTimeoutMS=None,
                                     connect=False,
                                     maxPoolSize=1)
         else:
