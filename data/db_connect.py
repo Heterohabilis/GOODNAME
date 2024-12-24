@@ -37,8 +37,7 @@ def connect_db():
                                     tlsAllowInvalidCertificates=True,
                                     connectTimeoutMS=30000,
                                     socketTimeoutMS=None,
-                                    socketKeepAlive=True,
-                                    connect=True,
+                                    connect=False,
                                     maxPoolSize=1)
         else:
             print("Connecting to Mongo locally.")
