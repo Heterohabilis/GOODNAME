@@ -33,7 +33,8 @@ def connect_db():
                                     + '@goodname-cluster.j9w1b.mongodb.net/?'
                                     + 'retryWrites=true&w=majority&appName'
                                     + '=GOODNAME-Cluster',
-                                    tls=True, tlsAllowInvalidCertificates=True,
+                                    tls=True,
+                                    tlsCAFile=None,
                                     connect=True,
                                     maxPoolSize=1)
         else:
