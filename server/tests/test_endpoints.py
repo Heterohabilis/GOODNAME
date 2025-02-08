@@ -180,15 +180,14 @@ def test_create_text_error(mock_create):
     assert resp.status_code == NOT_ACCEPTABLE
 
 
-@patch('data.manuscripts.query.update_state', autospec=True, return_value='mock_state')
-def test_update_state(mock_update_state):
-    _id = 'mock_id'
-    action = 'action'
-    resp = TEST_CLIENT.put(f'{ep.MANU_EP}/{_id}/update_state',
-                           json={'action': action})
-    assert resp.status_code == OK
-    assert resp.json['return'] == 'mock_state'
-
+# @patch('data.manuscripts.query.update_state', autospec=True, return_value='mock_state')
+# def test_update_state(mock_update_state):
+#     _id = 'mock_id'
+#     action = 'action'
+#     resp = TEST_CLIENT.put(f'{ep.MANU_EP}/{_id}/update_state',
+#                            json={'action': action})
+#     assert resp.status_code == OK
+#     assert resp.json['return'] == 'mock_state'
 
 
 @patch('data.manuscripts.query.read_one', autospec=True, return_value={'id': 'mock_id', 'title': 'Mock Title'})
@@ -273,3 +272,13 @@ def test_create_manuscript_error(mock_create):
     }
     resp = TEST_CLIENT.put(f'{ep.MANU_EP}/create', json=payload)
     assert resp.status_code == NOT_ACCEPTABLE
+
+
+@patch('data.manuscripts.query.handle_action', autospec=True, return_value='mock_state')
+def test_receive_action(mock_handle_action):
+
+    payload = {'_id': 'id','curr_state': 'curr_state', 'action': 'action'}
+    resp = TEST_CLIENT.put(f'{ep.MANU_EP}/receive_action',
+                           json=payload)
+    assert resp.status_code == OK
+    assert resp.json['return'] == 'mock_state'

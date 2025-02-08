@@ -14,6 +14,7 @@ import data.people as ppl
 import data.text as tx
 import data.manuscripts.query as qy
 
+
 # import werkzeug.exceptions as wz
 
 app = Flask(__name__)
@@ -434,22 +435,59 @@ class ManuCreate(Resource):
         }
 
 
-UPDATE_ENTRY = api.model('UpdateActionEntry', {
+# UPDATE_ENTRY = api.model('UpdateActionEntry', {
+#     qy.ACTION: fields.String,
+# })
+#
+
+# @api.route(f'{MANU_EP}/<_id>/update_state')
+# @api.expect(UPDATE_ENTRY)
+# class ManuUpdateState(Resource):
+#     def put(self, _id):
+#         try:
+#             action = request.json.get(qy.ACTION)
+#             ret = qy.update_state(_id, action)
+#         except Exception as err:
+#             raise wz.NotAcceptable(f'Could not update state: '
+#                                    f'{err=}')
+#         return {
+#             MESSAGE: 'Manuscript state updated!',
+#             RETURN: ret,
+#         }
+
+
+MANU_ACTION_FLDS = api.model('ManuscriptAction', {
+    qy.ID: fields.String,
+    qy.CURR_STATE: fields.String,
     qy.ACTION: fields.String,
+    qy.REFEREE: fields.String,
 })
 
 
-@api.route(f'{MANU_EP}/<_id>/update_state')
-@api.expect(UPDATE_ENTRY)
-class ManuUpdateState(Resource):
-    def put(self, _id):
+@api.route(f'{MANU_EP}/receive_action')
+class ReceiveAction(Resource):
+    """
+    Receive an action for a manuscript.
+    """
+    @api.response(HTTPStatus.OK, 'Success')
+    @api.response(HTTPStatus.NOT_ACCEPTABLE, 'Not acceptable')
+    @api.expect(MANU_ACTION_FLDS)
+    def put(self):
+        """
+        Receive an action for a manuscript.
+        """
         try:
+            manu_id = request.json.get(qy.ID)
+            curr_state = request.json.get(qy.CURR_STATE)
             action = request.json.get(qy.ACTION)
-            ret = qy.update_state(_id, action)
+            kwargs = {}
+            if action == qy.ASSIGN_REF or qy.DELETE_REF:
+                kwargs[qy.REFEREE] = request.json.get(qy.REFEREE)
+
+            ret = qy.handle_action(manu_id, curr_state, action, **kwargs)
         except Exception as err:
-            raise wz.NotAcceptable(f'Could not update state: '
-                                   f'{err=}')
+            raise wz.NotAcceptable(f'Bad action: ' f'{err=}')
         return {
-            MESSAGE: 'Manuscript state updated!',
+            MESSAGE: 'Action received!',
             RETURN: ret,
         }

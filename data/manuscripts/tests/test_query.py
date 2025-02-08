@@ -38,16 +38,19 @@ def test_is_not_valid_action():
         assert not mqry.is_valid_action(gen_random_not_valid_str())
 
 
+_id = 'id'
+
+
 def test_handle_action_bad_state():
     with pytest.raises(ValueError):
-        mqry.handle_action(gen_random_not_valid_str(),
+        mqry.handle_action(_id, gen_random_not_valid_str(),
                            mqry.TEST_ACTION,
                            manu=mqry.SAMPLE_MANU)
 
 
 def test_handle_action_bad_action():
     with pytest.raises(ValueError):
-        mqry.handle_action(mqry.TEST_STATE,
+        mqry.handle_action(_id, mqry.TEST_STATE,
                            gen_random_not_valid_str(),
                            manu=mqry.SAMPLE_MANU)
 
@@ -57,9 +60,9 @@ def test_handle_action_valid_return():
         print(state)
         for action in mqry.get_valid_actions_by_state(state):
             print(f'{action=}')
-            new_state = mqry.handle_action(state, action,
+            new_state = mqry.handle_action(_id, state, action,
                                            manu=mqry.SAMPLE_MANU,
-                                           ref='Some ref')
+                                           referee='Some ref')
             print(f'{new_state=}')
             assert mqry.is_valid_state(new_state)
 
@@ -157,6 +160,6 @@ def test_delete_ref_with_multiple_refs(temp_manu):
     assert "Reviewer2" in manu[mqry.flds.REFEREES]
 
 
-def test_update_state(temp_manu):
-    new_state = mqry.update_state(temp_manu, mqry.ASSIGN_REF, ref='Alice')
-    assert new_state == mqry.IN_REF_REV
+# def test_update_state(temp_manu):
+#     new_state = mqry.update_state(temp_manu, mqry.SUBMITTED, mqry.ASSIGN_REF, ref='Alice')
+#     assert new_state == mqry.IN_REF_REV

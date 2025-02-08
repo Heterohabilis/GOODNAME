@@ -83,15 +83,15 @@ def is_valid_action(action: str) -> bool:
 
 
 #---------------------------------------------------------------
-def assign_ref(manu: dict, ref: str, extra=None) -> str:
+def assign_ref(manu: dict, referee: str, extra=None) -> str:
     print(extra)
-    manu[flds.REFEREES].append(ref)
+    manu[flds.REFEREES].append(referee)
     return IN_REF_REV
 
 
-def delete_ref(manu: dict, ref: str) -> str:
+def delete_ref(manu: dict, referee: str) -> str:
     if len(manu[flds.REFEREES]) > 0:
-        manu[flds.REFEREES].remove(ref)
+        manu[flds.REFEREES].remove(referee)
     if len(manu[flds.REFEREES]) > 0:
         return IN_REF_REV
     else:
@@ -187,7 +187,7 @@ def get_valid_actions_by_state(state: str):
     return valid_actions
 
 
-def handle_action(curr_state, action, **kwargs) -> str:
+def handle_action(_id, curr_state, action, **kwargs) -> str:
     if curr_state not in STATE_TABLE:
         raise ValueError(f'Bad state: {curr_state}')
     if action not in STATE_TABLE[curr_state]:
@@ -196,6 +196,8 @@ def handle_action(curr_state, action, **kwargs) -> str:
 
 
 ID = "_id"
+CURR_STATE = "curr_state"
+REFEREE = "referee"
 
 
 def create_query(_id: str) -> dict:
@@ -238,21 +240,21 @@ def update(_id: str, title: str, author: str, author_email: str, text: str, abst
     return _id
 
 
-def update_state(_id: str, action: str, **kwargs):
-    manuscript = read_one(_id)
-    if not exists(_id):
-        raise ValueError(f"Manuscript not exist")
-    curr_state = manuscript[flds.STATE]
-    if action not in get_valid_actions_by_state(curr_state):
-        raise ValueError(f"Action '{action}' is not valid for the current state '{curr_state}'")
-
-    new_state = handle_action(curr_state, action, manu=manuscript, **kwargs)
-    update_dict = {
-        flds.STATE: new_state,
-        flds.HISTORY: manuscript[flds.HISTORY] + [new_state],
-    }
-    dbc.update(MANUSCRIPT_COLLECT, create_query(_id), update_dict)
-    return new_state
+# def update_state(_id: str, curr_state: str, action: str, **kwargs):
+#     manuscript = read_one(_id)
+#     if not exists(_id):
+#         raise ValueError(f"Manuscript not exist")
+#     curr_state = manuscript[flds.STATE]
+#     if action not in get_valid_actions_by_state(curr_state):
+#         raise ValueError(f"Action '{action}' is not valid for the current state '{curr_state}'")
+#
+#     new_state = handle_action(curr_state, action, manu=manuscript, **kwargs)
+#     update_dict = {
+#         flds.STATE: new_state,
+#         flds.HISTORY: manuscript[flds.HISTORY] + [new_state],
+#     }
+#     dbc.update(MANUSCRIPT_COLLECT, create_query(_id), update_dict)
+#     return new_state
 
 
 def main():
