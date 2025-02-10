@@ -100,6 +100,9 @@ def delete_ref(manu: dict, referee: str) -> str:
     else:
         return SUBMITTED
 
+def update_ref(manu: dict):
+    ...
+
 
 #--------------------------------------------------------------------
 

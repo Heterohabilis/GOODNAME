@@ -1,0 +1,25 @@
+MANU = 'manu'
+
+
+def assign_ref(manu: dict, referee: str, extra=None) -> str:
+    print(extra)
+    manu[flds.REFEREES].append(referee)
+    manu[flds.HISTORY].append(IN_REF_REV)
+    update_ref(manu)
+    return IN_REF_REV
+
+
+def delete_ref(manu: dict, referee: str) -> str:
+    if len(manu[flds.REFEREES]) > 0:
+        manu[flds.REFEREES].remove(referee)
+    if len(manu[flds.REFEREES]) > 0:
+        manu[flds.HISTORY].append(IN_REF_REV)
+        update_ref(manu)
+        return IN_REF_REV
+    else:
+        manu[flds.HISTORY].append(SUBMITTED)
+        update_ref(manu)
+        return SUBMITTED
+
+def update_ref(manu: dict):
+    dbc.update(MANUSCRIPT_COLLECT, create_query(_id), manu)
