@@ -238,9 +238,10 @@ def create(title: str, author: str, author_email: str, text: str, abstract: str,
 def update(_id: str, title: str, author: str, author_email: str, text: str, abstract: str, editor: str):
     if not exists(_id):
         raise ValueError('Manuscript not exist')
+    old = read_one(_id)
     update_dict = {flds.TITLE: title, flds.AUTHOR: author, flds.AUTHOR_EMAIL: author_email,
-                   flds.STATE: SUBMITTED, flds.REFEREES: [], flds.TEXT: text,
-                   flds.ABSTRACT: abstract, flds.HISTORY: [SUBMITTED], flds.EDITOR: editor}
+                   flds.STATE: old[flds.STATE], flds.REFEREES: old[flds.REFEREES], flds.TEXT: text,
+                   flds.ABSTRACT: abstract, flds.HISTORY: old[flds.HISTORY], flds.EDITOR: editor}
     dbc.update(MANUSCRIPT_COLLECT, create_query(_id), update_dict)
     return _id
 
