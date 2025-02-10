@@ -83,6 +83,9 @@ def is_valid_action(action: str) -> bool:
 
 
 #---------------------------------------------------------------
+MANU = 'manu'
+
+
 def assign_ref(manu: dict, referee: str, extra=None) -> str:
     print(extra)
     manu[flds.REFEREES].append(referee)
