@@ -195,6 +195,8 @@ def handle_action(_id, curr_state, action, **kwargs) -> str:
         raise ValueError(f'Bad state: {curr_state}')
     if action not in STATE_TABLE[curr_state]:
         raise ValueError(f'{action} not available in {curr_state}')
+    if action == ASSIGN_REF or DELETE_REF:
+        kwargs.update({MANU: SAMPLE_MANU})
     return STATE_TABLE[curr_state][action][FUNC](**kwargs)
 
 
@@ -261,6 +263,7 @@ def update(_id: str, title: str, author: str, author_email: str, text: str, abst
 
 
 def main():
+    """
     print(handle_action(SUBMITTED, ASSIGN_REF,
                         manu=SAMPLE_MANU, ref='Jack'))
     print(handle_action(SUBMITTED, WITHDRAW, manu=SAMPLE_MANU))
@@ -282,6 +285,19 @@ def main():
     print(handle_action(COPY_EDIT, DONE, manu=SAMPLE_MANU))
     print(handle_action(AUTHOR_REV, DONE, manu=SAMPLE_MANU))
     print(handle_action(FORMATTING, DONE, manu=SAMPLE_MANU))
+    """
+
+    print(handle_action("xxx", SUBMITTED, action = ASSIGN_REF, manu = SAMPLE_MANU,
+                        referee = "momo1", extra = "Extra!"))
+    print(SAMPLE_MANU)
+    print(handle_action("xxx", IN_REF_REV, action = ASSIGN_REF, manu = SAMPLE_MANU,
+                        referee = "momo2"))
+    print(SAMPLE_MANU)
+    print(handle_action("xxx", IN_REF_REV, action = DELETE_REF, manu = SAMPLE_MANU,
+                        referee = "momo2"))
+    print(SAMPLE_MANU)
+
+
 
 
 if __name__ == '__main__':
