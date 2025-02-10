@@ -59,6 +59,8 @@ REMOVE_REF = 'RRF'
 SUBMIT_REVIEW = 'SBR'
 ACCEPT_WITH_REVISIONS = 'AWR'
 
+MANU = 'manu'
+
 TEST_ACTION = ACCEPT
 
 VALID_ACTIONS = [
@@ -192,6 +194,9 @@ def handle_action(_id, curr_state, action, **kwargs) -> str:
         raise ValueError(f'Bad state: {curr_state}')
     if action not in STATE_TABLE[curr_state]:
         raise ValueError(f'{action} not available in {curr_state}')
+    manu_ = read_one(_id)
+    if action == ASSIGN_REF or DELETE_REF:
+        kwargs[MANU] = manu_
     return STATE_TABLE[curr_state][action][FUNC](**kwargs)
 
 
