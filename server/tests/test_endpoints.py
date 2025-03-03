@@ -282,3 +282,11 @@ def test_receive_action(mock_handle_action):
                            json=payload)
     assert resp.status_code == OK
     assert resp.json['return'] == 'mock_state'
+
+
+@patch('data.manuscripts.query.handle_action', autospec=True, side_effect=Exception('State error'))
+def test_receive_action_error(mock_state):
+    payload = {'_id': 'id','curr_state': 'curr_state', 'action': 'action'}
+    resp = TEST_CLIENT.put(f'{ep.MANU_EP}/receive_action',
+                           json=payload)
+    assert resp.status_code == NOT_ACCEPTABLE
