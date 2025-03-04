@@ -43,14 +43,14 @@ _id = 'id'
 
 def test_handle_action_bad_state():
     with pytest.raises(ValueError):
-        mqry.handle_action(_id, gen_random_not_valid_str(),
+        mqry.handle_action(gen_random_not_valid_str(),
                            mqry.TEST_ACTION,
                            manu=mqry.SAMPLE_MANU)
 
 
 def test_handle_action_bad_action():
     with pytest.raises(ValueError):
-        mqry.handle_action(_id, mqry.TEST_STATE,
+        mqry.handle_action(mqry.TEST_STATE,
                            gen_random_not_valid_str(),
                            manu=mqry.SAMPLE_MANU)
 
@@ -60,7 +60,7 @@ def test_handle_action_valid_return():
         print(state)
         for action in mqry.get_valid_actions_by_state(state):
             print(f'{action=}')
-            new_state = mqry.handle_action(_id, state, action,
+            new_state = mqry.handle_action(state, action,
                                            manu=mqry.SAMPLE_MANU,
                                            referee='Some ref')
             print(f'{new_state=}')

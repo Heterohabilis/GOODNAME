@@ -435,25 +435,25 @@ class ManuCreate(Resource):
         }
 
 
-# UPDATE_ENTRY = api.model('UpdateActionEntry', {
-#     qy.ACTION: fields.String,
-# })
-#
+UPDATE_ENTRY = api.model('UpdateActionEntry', {
+    qy.ACTION: fields.String,
+})
 
-# @api.route(f'{MANU_EP}/<_id>/update_state')
-# @api.expect(UPDATE_ENTRY)
-# class ManuUpdateState(Resource):
-#     def put(self, _id):
-#         try:
-#             action = request.json.get(qy.ACTION)
-#             ret = qy.update_state(_id, action)
-#         except Exception as err:
-#             raise wz.NotAcceptable(f'Could not update state: '
-#                                    f'{err=}')
-#         return {
-#             MESSAGE: 'Manuscript state updated!',
-#             RETURN: ret,
-#         }
+
+@api.route(f'{MANU_EP}/<_id>/update_state')
+@api.expect(UPDATE_ENTRY)
+class ManuUpdateState(Resource):
+    def put(self, _id):
+        try:
+            action = request.json.get(qy.ACTION)
+            ret = qy.update_state(_id, action)
+        except Exception as err:
+            raise wz.NotAcceptable(f'Could not update state: '
+                                   f'{err=}')
+        return {
+            MESSAGE: 'Manuscript state updated!',
+            RETURN: ret,
+        }
 
 
 MANU_ACTION_FLDS = api.model('ManuscriptAction', {
@@ -477,14 +477,14 @@ class ReceiveAction(Resource):
         Receive an action for a manuscript.
         """
         try:
-            manu_id = request.json.get(qy.ID)
+            # manu_id = request.json.get(qy.ID)
             curr_state = request.json.get(qy.CURR_STATE)
             action = request.json.get(qy.ACTION)
             kwargs = {}
             if action == qy.ASSIGN_REF or qy.DELETE_REF:
                 kwargs[qy.REFEREE] = request.json.get(qy.REFEREE)
 
-            ret = qy.handle_action(manu_id, curr_state, action, **kwargs)
+            ret = qy.handle_action(curr_state, action, **kwargs)
         except Exception as err:
             raise wz.NotAcceptable(f'Bad action: ' f'{err=}')
         return {
