@@ -447,7 +447,11 @@ class ManuUpdateState(Resource):
     def put(self, _id):
         try:
             action = request.json.get(qy.ACTION)
-            ret = qy.update_state(_id, action)
+            if action == qy.ASSIGN_REF or qy.DELETE_REF:
+                ref = request.json.get(qy.REFEREE)
+                ret = qy.update_state(_id, action, referee=ref)
+            else:
+                ret = qy.update_state(_id, action)
         except Exception as err:
             raise wz.NotAcceptable(f'Could not update state: '
                                    f'{err=}')
