@@ -258,9 +258,15 @@ def update_state(_id: str, action: str, **kwargs):
         raise ValueError(f"Action '{action}' is not valid for the current state '{curr_state}'")
 
     new_state = handle_action(curr_state, action, manu=manuscript, **kwargs)
+    ori_array = manuscript[flds.REFEREES]
+    if action == ASSIGN_REF:
+        ori_array.append(kwargs["referee"])
+    if action == DELETE_REF:
+        ori_array.remove(kwargs["referee"])
     update_dict = {
         flds.STATE: new_state,
         flds.HISTORY: manuscript[flds.HISTORY] + [new_state],
+        flds.REFEREES: ori_array,
     }
     dbc.update(MANUSCRIPT_COLLECT, create_query(_id), update_dict)
     return new_state
