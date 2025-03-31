@@ -437,6 +437,7 @@ class ManuCreate(Resource):
 
 UPDATE_ENTRY = api.model('UpdateActionEntry', {
     qy.ACTION: fields.String,
+    qy.REFEREE: fields.String,
 })
 
 
