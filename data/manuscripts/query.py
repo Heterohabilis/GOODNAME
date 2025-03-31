@@ -222,7 +222,7 @@ def exists(_id: str):
 
 
 def read():
-    text = dbc.read(MANUSCRIPT_COLLECT, dbc.SE_DB, True)
+    text = dbc.read(MANUSCRIPT_COLLECT, dbc.SE_DB, False)
     return text
 
 
