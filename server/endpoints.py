@@ -13,7 +13,8 @@ import werkzeug.exceptions as wz
 import data.people as ppl
 import data.text as tx
 import data.manuscripts.query as qy
-import data.manuscripts.form as fm
+import data.manuscripts.action_form as af
+import data.role_form as rf
 
 
 # import werkzeug.exceptions as wz
@@ -505,7 +506,7 @@ class Roles(Resource):
     This endpoint returns available roles for people.
     """
     def get(self):
-        return fm.ROLES
+        return rf.ROLES
 
 
 @api.route('/actions')
@@ -514,4 +515,4 @@ class Actions(Resource):
     Return all possible manuscript actions grouped by state.
     """
     def get(self):
-        return fm.ACTION
+        return af.ACTION

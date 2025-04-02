@@ -1,5 +1,5 @@
 """
-Tests for examples/form.py.
+Tests for examples/action_form.py.
 """
 import examples.form as fm
 
