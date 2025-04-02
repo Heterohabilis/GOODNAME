@@ -496,3 +496,20 @@ class ReceiveAction(Resource):
             MESSAGE: 'Action received!',
             RETURN: ret,
         }
+
+
+@api.route('/roles')
+class Roles(Resource):
+    """
+    This endpoint returns available roles for people.
+    """
+    def get(self):
+        roles = {
+            'AU': 'Author',
+            'ED': 'Editor',
+            'ME': 'Managing Editor',
+            'CE': 'Copy Editor',
+            'RE': 'Referee',
+        }
+        return roles
+
