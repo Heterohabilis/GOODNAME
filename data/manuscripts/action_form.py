@@ -10,3 +10,7 @@ ACTION = {
             "REJECTED": ["WITHDRAW"],
             "WITHDRAWN": ["WITHDRAW"]
         }
+
+
+def get_form() -> dict:
+    return ACTION

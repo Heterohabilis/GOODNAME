@@ -5,3 +5,7 @@ ROLES = {
     'CE': 'Copy Editor',
     'RE': 'Referee',
 }
+
+
+def get_form() -> dict:
+    return ROLES

@@ -506,7 +506,7 @@ class Roles(Resource):
     This endpoint returns available roles for people.
     """
     def get(self):
-        return rf.ROLES
+        return rf.get_form()
 
 
 @api.route('/actions')
@@ -515,4 +515,4 @@ class Actions(Resource):
     Return all possible manuscript actions grouped by state.
     """
     def get(self):
-        return af.ACTION
+        return af.get_form()
