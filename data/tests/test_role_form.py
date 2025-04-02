@@ -1,11 +1,5 @@
-ROLES = {
-    'AU': 'Author',
-    'ED': 'Editor',
-    'ME': 'Managing Editor',
-    'CE': 'Copy Editor',
-    'RE': 'Referee',
-}
+import data.role_form as rf
 
 
-def get_form() -> dict:
-    return ROLES
+def test_form_return() -> None:
+    assert rf.get_form() is not None

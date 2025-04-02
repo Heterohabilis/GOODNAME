@@ -290,3 +290,23 @@ def test_receive_action_error(mock_state):
     resp = TEST_CLIENT.put(f'{ep.MANU_EP}/receive_action',
                            json=payload)
     assert resp.status_code == NOT_ACCEPTABLE
+
+
+@patch('data.role_form.get_form', autospec=True, return_value={'editor': ['assign', 'review'], 'author': ['submit']})
+def test_roles(mock_get_form):
+    resp = TEST_CLIENT.get('/roles')
+    assert resp.status_code == OK
+    resp_json = resp.get_json()
+    assert isinstance(resp_json, dict)
+    assert 'editor' in resp_json
+    assert isinstance(resp_json['editor'], list)
+
+
+@patch('data.manuscripts.action_form.get_form', autospec=True, return_value={'submitted': ['assign_editor'], 'review': ['accept', 'reject']})
+def test_actions(mock_get_form):
+    resp = TEST_CLIENT.get('/actions')
+    assert resp.status_code == OK
+    resp_json = resp.get_json()
+    assert isinstance(resp_json, dict)
+    assert 'submitted' in resp_json
+    assert isinstance(resp_json['submitted'], list)
