@@ -512,4 +512,3 @@ class Roles(Resource):
             'RE': 'Referee',
         }
         return roles
-
