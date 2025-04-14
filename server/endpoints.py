@@ -15,6 +15,8 @@ import data.text as tx
 import data.manuscripts.query as qy
 import data.manuscripts.action_form as af
 import data.role_form as rf
+import examples.form_filler as ff
+import examples.form as fm
 
 
 # import werkzeug.exceptions as wz
@@ -43,6 +45,7 @@ DATE = '2024-10-01'
 PEOPLE_EP = '/people'
 TEXT_EP = '/text'
 MANU_EP = '/manuscript'
+LOGIN_EP = '/login'
 
 MESSAGE = "Message"
 RETURN = 'return'
@@ -516,3 +519,57 @@ class Actions(Resource):
     """
     def get(self):
         return af.get_form()
+
+
+VALID_USERS = {"elaine": "password"}
+LOGIN_FLDS = api.model('LoginEntry', {
+    'username': fields.String,
+    'password': fields.String,
+})
+
+
+@api.route(LOGIN_EP)
+class Login(Resource):
+    """
+    This class handles user login.
+    """
+
+    @api.response(HTTPStatus.OK, 'Success')
+    @api.response(HTTPStatus.BAD_REQUEST, 'Missing required fields')
+    @api.response(HTTPStatus.UNAUTHORIZED, 'Invalid credentials')
+    @api.expect(LOGIN_FLDS)
+    def put(self):
+        """
+        Authenticate a user based on query parameters.
+        """
+        try:
+            expected_fields = ff.get_query_fld_names(fm.get_form())
+            received = {fld: request.json.get(fld) for fld in expected_fields}
+
+            # Check for missing fields
+            missing = [fld for fld, val in received.items() if val is None]
+            if missing:
+                return {
+                    "error": f"Missing required fields: {', '.join(missing)}"
+                }, HTTPStatus.BAD_REQUEST
+
+            username = received.get("username")
+            password = received.get("password")
+
+            if VALID_USERS.get(username) == password:
+                return {"message": f"Welcome, {username}!"}
+            else:
+                return ({"error": "Invalid username or password"},
+                        HTTPStatus.UNAUTHORIZED)
+        except Exception as err:
+            raise wz.NotAcceptable(f'Login failed: {err=}')
+
+
+@api.route(f'{LOGIN_EP}/form')
+class LoginForm(Resource):
+    """
+    Return form structure for login.
+    """
+
+    def get(self):
+        return fm.get_form_descr()

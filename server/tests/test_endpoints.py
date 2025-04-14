@@ -4,7 +4,7 @@ from http.client import (
     NOT_ACCEPTABLE,
     NOT_FOUND,
     OK,
-    SERVICE_UNAVAILABLE,
+    SERVICE_UNAVAILABLE, UNAUTHORIZED,
 )
 
 from unittest.mock import patch
@@ -310,3 +310,67 @@ def test_actions(mock_get_form):
     assert isinstance(resp_json, dict)
     assert 'submitted' in resp_json
     assert isinstance(resp_json['submitted'], list)
+
+
+@patch('examples.form.get_form', autospec=True, return_value=[
+    {'fld_nm': 'username', 'param_type': 'query_string'},
+    {'fld_nm': 'password', 'param_type': 'query_string'},
+])
+@patch('examples.form_filler.get_query_fld_names', autospec=True, return_value=['username', 'password'])
+@patch.dict('server.endpoints.VALID_USERS', {'username': 'password'})
+def test_login_success(mock_get_query_fld_names, mock_get_form):
+    resp = TEST_CLIENT.put(ep.LOGIN_EP, json={'username': 'username', 'password': 'password'})
+    assert resp.status_code == OK
+    resp_json = resp.get_json()
+    assert isinstance(resp_json, dict)
+    assert resp_json['message'] == 'Welcome, username!'
+
+
+@patch('examples.form.get_form', autospec=True, return_value=[
+    {'fld_nm': 'username', 'param_type': 'query_string'},
+    {'fld_nm': 'password', 'param_type': 'query_string'},
+])
+@patch('examples.form_filler.get_query_fld_names', autospec=True, return_value=['username', 'password'])
+@patch.dict('server.endpoints.VALID_USERS', {'username': 'password'})
+def test_login_unauthorized(mock_get_query_fld_names, mock_get_form):
+    resp = TEST_CLIENT.put(ep.LOGIN_EP, json={'username': 'username', 'password': 'wrong_password'})
+    assert resp.status_code == UNAUTHORIZED
+    resp_json = resp.get_json()
+    assert isinstance(resp_json, dict)
+    assert resp_json['error'] == "Invalid username or password"
+
+
+@patch('examples.form.get_form', autospec=True, return_value=[
+    {'fld_nm': 'username', 'param_type': 'query_string'},
+    {'fld_nm': 'password', 'param_type': 'query_string'},
+])
+@patch('examples.form_filler.get_query_fld_names', autospec=True, return_value=['username', 'password'])
+@patch.dict('server.endpoints.VALID_USERS', {'username': 'password'})
+def test_login_bad_request(mock_get_query_fld_names, mock_get_form):
+    resp = TEST_CLIENT.put(ep.LOGIN_EP, json={'username': 'username'})
+    assert resp.status_code == BAD_REQUEST
+    resp_json = resp.get_json()
+    assert isinstance(resp_json, dict)
+    assert resp_json['error'] == "Missing required fields: password"
+
+
+@patch('examples.form.get_form', autospec=True, side_effect=Exception('Form error'))
+@patch('examples.form_filler.get_query_fld_names', autospec=True, return_value=['username', 'password'])
+@patch.dict('server.endpoints.VALID_USERS', {'username': 'password'})
+def test_login_not_acceptable(mock_get_query_fld_names, mock_get_form):
+    resp = TEST_CLIENT.put(ep.LOGIN_EP, json={'username': 'username', 'password': 'password'})
+    assert resp.status_code == NOT_ACCEPTABLE
+
+
+@patch('examples.form.get_form_descr', autospec=True, return_value={
+       'username': 'Enter your username',
+    'password': 'Enter your password'
+})
+def test_login_form(mock_get_form_descr):
+    resp = TEST_CLIENT.get(f'{ep.LOGIN_EP}/form')
+    assert resp.status_code == OK
+    resp_json = resp.get_json()
+    assert isinstance(resp_json, dict)
+    assert 'username' in resp_json
+    assert 'password' in resp_json
+

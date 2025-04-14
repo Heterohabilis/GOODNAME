@@ -85,7 +85,7 @@ def get_fld_names(fld_descrips: list) -> list:
 def get_query_fld_names(fld_descrips: list) -> list:
     fld_nms = []
     for fld in fld_descrips:
-        if fld[PARAM_TYPE] == QUERY_STR:
+        if fld.get(PARAM_TYPE) == QUERY_STR:
             fld_nms.append(fld[FLD_NM])  # every field MUST have a name!
     return fld_nms
 
