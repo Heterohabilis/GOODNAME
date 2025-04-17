@@ -582,4 +582,14 @@ developer_ns = Namespace(
 )
 
 
+@developer_ns.route('/endpoints')
+class DevEndpoints(Resource):
+    def get(self):
+        """
+        Return a sorted list of all active URL rules.
+        """
+        routes = sorted(rule.rule for rule in app.url_map.iter_rules())
+        return {'active_endpoints': routes}
+
+
 api.add_namespace(developer_ns)
