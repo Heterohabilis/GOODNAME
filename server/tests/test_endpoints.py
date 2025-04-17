@@ -374,3 +374,11 @@ def test_login_form(mock_get_form_descr):
     assert 'username' in resp_json
     assert 'password' in resp_json
 
+
+def test_developer_endpoints():
+    resp = TEST_CLIENT.get('/developer/endpoints')
+    assert resp.status_code == OK
+    resp_json = resp.get_json()
+    assert 'active_endpoints' in resp_json
+    assert isinstance(resp_json['active_endpoints'], list)
+    assert ep.HELLO_EP in resp_json['active_endpoints']
