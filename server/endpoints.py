@@ -5,7 +5,7 @@ The endpoint called `endpoints` will return all available endpoints.
 from http import HTTPStatus
 
 from flask import Flask, request
-from flask_restx import Resource, Api, fields  # Namespace, fields
+from flask_restx import Resource, Api, fields, Namespace     # fields
 from flask_cors import CORS
 
 import werkzeug.exceptions as wz
@@ -573,3 +573,13 @@ class LoginForm(Resource):
 
     def get(self):
         return fm.get_form_descr()
+
+
+developer_ns = Namespace(
+    name='developer',
+    description='Developer utilities (hidden)',
+    path='/developer'
+)
+
+
+api.add_namespace(developer_ns)
