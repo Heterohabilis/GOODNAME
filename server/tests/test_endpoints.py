@@ -382,3 +382,21 @@ def test_developer_endpoints():
     assert 'active_endpoints' in resp_json
     assert isinstance(resp_json['active_endpoints'], list)
     assert ep.HELLO_EP in resp_json['active_endpoints']
+
+
+def test_developer_params():
+    resp = TEST_CLIENT.get('/developer/params')
+    assert resp.status_code == OK
+    resp_json = resp.get_json()
+    assert 'endpoint_params' in resp_json
+    params_map = resp_json['endpoint_params']
+    assert isinstance(params_map, dict)
+    key = '/people/<email> [PUT]'
+    assert key in params_map
+    assert isinstance(params_map[key], list)
+    assert 'name' in params_map[key]
+    login_key = '/login [PUT]'
+    assert login_key in params_map
+    assert 'username' in params_map[login_key]
+    assert 'password' in params_map[login_key]
+
