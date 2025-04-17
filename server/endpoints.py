@@ -592,4 +592,14 @@ class DevEndpoints(Resource):
         return {'active_endpoints': routes}
 
 
+from server.endpoints_param import ENDPOINT_PARAMS
+@developer_ns.route('/params')
+class DevParams(Resource):
+    def get(self):
+        """
+        returns the parameters of the endpoints
+        """
+        return {'endpoint_params': ENDPOINT_PARAMS}
+
+
 api.add_namespace(developer_ns)
