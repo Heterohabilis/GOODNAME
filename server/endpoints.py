@@ -17,6 +17,7 @@ import data.manuscripts.action_form as af
 import data.role_form as rf
 import examples.form_filler as ff
 import examples.form as fm
+from server.endpoints_param import ENDPOINT_PARAMS
 
 
 # import werkzeug.exceptions as wz
@@ -592,7 +593,6 @@ class DevEndpoints(Resource):
         return {'active_endpoints': routes}
 
 
-from server.endpoints_param import ENDPOINT_PARAMS
 @developer_ns.route('/params')
 class DevParams(Resource):
     def get(self):
