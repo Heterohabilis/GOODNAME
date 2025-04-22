@@ -15,8 +15,9 @@ import data.text as tx
 import data.manuscripts.query as qy
 import data.manuscripts.action_form as af
 import data.role_form as rf
-import examples.form_filler as ff
+# import examples.form_filler as ff
 import examples.form as fm
+import data.users as us
 from server.endpoints_param import ENDPOINT_PARAMS
 
 
@@ -47,6 +48,8 @@ PEOPLE_EP = '/people'
 TEXT_EP = '/text'
 MANU_EP = '/manuscript'
 LOGIN_EP = '/login'
+REGISTER_EP = "/register"
+USER_EP = "/user"
 
 MESSAGE = "Message"
 RETURN = 'return'
@@ -522,7 +525,7 @@ class Actions(Resource):
         return af.get_form()
 
 
-VALID_USERS = {"elaine": "password"}
+VALID_USERS = {"elaine@nyu.edu": "password"}
 LOGIN_FLDS = api.model('LoginEntry', {
     'username': fields.String,
     'password': fields.String,
@@ -544,26 +547,57 @@ class Login(Resource):
         Authenticate a user based on query parameters.
         """
         try:
-            expected_fields = ff.get_query_fld_names(fm.get_form())
-            received = {fld: request.json.get(fld) for fld in expected_fields}
+            username = request.json.get("username")
+            password = request.json.get("password")
 
-            # Check for missing fields
-            missing = [fld for fld, val in received.items() if val is None]
-            if missing:
-                return {
-                    "error": f"Missing required fields: {', '.join(missing)}"
-                }, HTTPStatus.BAD_REQUEST
+            if not username:
+                return ({"error": "Username is required."},
+                        HTTPStatus.BAD_REQUEST)
 
-            username = received.get("username")
-            password = received.get("password")
-
-            if VALID_USERS.get(username) == password:
-                return {"message": f"Welcome, {username}!"}
+            if us.verify_password(username, password):
+                return {"message": f"Welcome, {username}!"}, HTTPStatus.OK
             else:
-                return ({"error": "Invalid username or password"},
+                return ({"error": "Invalid username or password."},
                         HTTPStatus.UNAUTHORIZED)
         except Exception as err:
             raise wz.NotAcceptable(f'Login failed: {err=}')
+
+
+REGISTER_FLDS = api.model('RegisterEntry', {
+    'username': fields.String(required=True),
+    'level': fields.Integer(default=0),
+    'password': fields.String(required=True),
+})
+
+
+@api.route(REGISTER_EP)
+class Register(Resource):
+    """
+    Endpoint to register a new user.
+    """
+
+    @api.expect(REGISTER_FLDS)
+    @api.response(HTTPStatus.CREATED, 'User registered')
+    @api.response(HTTPStatus.BAD_REQUEST, 'Invalid data or user exists')
+    def post(self):
+        try:
+            username = request.json.get("username")
+            password = request.json.get("password")
+            level = request.json.get("level", 0)
+
+            if not username:
+                return ({"error": "Username is required."},
+                        HTTPStatus.BAD_REQUEST)
+
+            result = us.add_user(username=username,
+                                 password=password, level=level)
+
+            if "error" in result:
+                return result, HTTPStatus.BAD_REQUEST
+            else:
+                return result, HTTPStatus.CREATED
+        except Exception as err:
+            raise wz.NotAcceptable(f'Registration failed: {err=}')
 
 
 @api.route(f'{LOGIN_EP}/form')

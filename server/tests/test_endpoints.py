@@ -276,8 +276,7 @@ def test_create_manuscript_error(mock_create):
 
 @patch('data.manuscripts.query.handle_action', autospec=True, return_value='mock_state')
 def test_receive_action(mock_handle_action):
-
-    payload = {'_id': 'id','curr_state': 'curr_state', 'action': 'action'}
+    payload = {'_id': 'id', 'curr_state': 'curr_state', 'action': 'action'}
     resp = TEST_CLIENT.put(f'{ep.MANU_EP}/receive_action',
                            json=payload)
     assert resp.status_code == OK
@@ -286,7 +285,7 @@ def test_receive_action(mock_handle_action):
 
 @patch('data.manuscripts.query.handle_action', autospec=True, side_effect=Exception('State error'))
 def test_receive_action_error(mock_state):
-    payload = {'_id': 'id','curr_state': 'curr_state', 'action': 'action'}
+    payload = {'_id': 'id', 'curr_state': 'curr_state', 'action': 'action'}
     resp = TEST_CLIENT.put(f'{ep.MANU_EP}/receive_action',
                            json=payload)
     assert resp.status_code == NOT_ACCEPTABLE
@@ -302,7 +301,8 @@ def test_roles(mock_get_form):
     assert isinstance(resp_json['editor'], list)
 
 
-@patch('data.manuscripts.action_form.get_form', autospec=True, return_value={'submitted': ['assign_editor'], 'review': ['accept', 'reject']})
+@patch('data.manuscripts.action_form.get_form', autospec=True,
+       return_value={'submitted': ['assign_editor'], 'review': ['accept', 'reject']})
 def test_actions(mock_get_form):
     resp = TEST_CLIENT.get('/actions')
     assert resp.status_code == OK
@@ -312,13 +312,8 @@ def test_actions(mock_get_form):
     assert isinstance(resp_json['submitted'], list)
 
 
-@patch('examples.form.get_form', autospec=True, return_value=[
-    {'fld_nm': 'username', 'param_type': 'query_string'},
-    {'fld_nm': 'password', 'param_type': 'query_string'},
-])
-@patch('examples.form_filler.get_query_fld_names', autospec=True, return_value=['username', 'password'])
-@patch.dict('server.endpoints.VALID_USERS', {'username': 'password'})
-def test_login_success(mock_get_query_fld_names, mock_get_form):
+@patch('data.users.verify_password', autospec=True, return_value=True)
+def test_login_success(mock_verify_password):
     resp = TEST_CLIENT.put(ep.LOGIN_EP, json={'username': 'username', 'password': 'password'})
     assert resp.status_code == OK
     resp_json = resp.get_json()
@@ -326,44 +321,32 @@ def test_login_success(mock_get_query_fld_names, mock_get_form):
     assert resp_json['message'] == 'Welcome, username!'
 
 
-@patch('examples.form.get_form', autospec=True, return_value=[
-    {'fld_nm': 'username', 'param_type': 'query_string'},
-    {'fld_nm': 'password', 'param_type': 'query_string'},
-])
-@patch('examples.form_filler.get_query_fld_names', autospec=True, return_value=['username', 'password'])
-@patch.dict('server.endpoints.VALID_USERS', {'username': 'password'})
-def test_login_unauthorized(mock_get_query_fld_names, mock_get_form):
+@patch('data.users.verify_password', autospec=True, return_value=False)
+def test_login_unauthorized(mock_verify_password):
     resp = TEST_CLIENT.put(ep.LOGIN_EP, json={'username': 'username', 'password': 'wrong_password'})
     assert resp.status_code == UNAUTHORIZED
     resp_json = resp.get_json()
     assert isinstance(resp_json, dict)
-    assert resp_json['error'] == "Invalid username or password"
+    assert resp_json['error'] == "Invalid username or password."
 
 
-@patch('examples.form.get_form', autospec=True, return_value=[
-    {'fld_nm': 'username', 'param_type': 'query_string'},
-    {'fld_nm': 'password', 'param_type': 'query_string'},
-])
-@patch('examples.form_filler.get_query_fld_names', autospec=True, return_value=['username', 'password'])
-@patch.dict('server.endpoints.VALID_USERS', {'username': 'password'})
-def test_login_bad_request(mock_get_query_fld_names, mock_get_form):
-    resp = TEST_CLIENT.put(ep.LOGIN_EP, json={'username': 'username'})
+@patch('data.users.verify_password', autospec=True, return_value=True)
+def test_login_bad_request(mock_verify_password):
+    resp = TEST_CLIENT.put(ep.LOGIN_EP, json={'password': 'password'})
     assert resp.status_code == BAD_REQUEST
     resp_json = resp.get_json()
     assert isinstance(resp_json, dict)
-    assert resp_json['error'] == "Missing required fields: password"
+    assert resp_json['error'] == "Username is required."
 
 
-@patch('examples.form.get_form', autospec=True, side_effect=Exception('Form error'))
-@patch('examples.form_filler.get_query_fld_names', autospec=True, return_value=['username', 'password'])
-@patch.dict('server.endpoints.VALID_USERS', {'username': 'password'})
-def test_login_not_acceptable(mock_get_query_fld_names, mock_get_form):
+@patch('data.users.verify_password', autospec=True, side_effect=ValueError)
+def test_login_not_acceptable(mock_verify_password):
     resp = TEST_CLIENT.put(ep.LOGIN_EP, json={'username': 'username', 'password': 'password'})
     assert resp.status_code == NOT_ACCEPTABLE
 
 
 @patch('examples.form.get_form_descr', autospec=True, return_value={
-       'username': 'Enter your username',
+    'username': 'Enter your username',
     'password': 'Enter your password'
 })
 def test_login_form(mock_get_form_descr):
@@ -399,4 +382,3 @@ def test_developer_params():
     assert login_key in params_map
     assert 'username' in params_map[login_key]
     assert 'password' in params_map[login_key]
-
