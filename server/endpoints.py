@@ -551,6 +551,7 @@ REGISTER_FLDS = api.model('RegisterEntry', {
     'password': fields.String(required=True),
 })
 
+
 @api.route(f'{USER_EP}/<username>')
 class User(Resource):
     """
@@ -567,7 +568,6 @@ class User(Resource):
         else:
             raise wz.NotFound(f'No such user: {username}')
 
-
     @api.response(HTTPStatus.OK, 'Success')
     @api.response(HTTPStatus.NOT_FOUND, 'No such user.')
     def delete(self, username):
@@ -579,7 +579,6 @@ class User(Resource):
             return {'Deleted': ret}
         else:
             raise wz.NotFound(f'No such user: {username}')
-
 
     @api.response(HTTPStatus.OK, 'Success')
     @api.response(HTTPStatus.NOT_ACCEPTABLE, 'Not acceptable')
@@ -599,6 +598,7 @@ class User(Resource):
             MESSAGE: 'User updated!',
             RETURN: ret,
         }
+
 
 @api.route(LOGIN_EP)
 class Login(Resource):
