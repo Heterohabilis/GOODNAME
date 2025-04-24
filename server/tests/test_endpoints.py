@@ -312,6 +312,11 @@ def test_actions(mock_get_form):
     assert isinstance(resp_json['submitted'], list)
 
 
+def test_get_users():
+    resp = TEST_CLIENT.get(ep.USER_EP)
+    assert resp.status_code == OK
+
+
 @patch('data.users.verify_password', autospec=True, return_value=True)
 def test_login_success(mock_verify_password):
     resp = TEST_CLIENT.put(ep.LOGIN_EP, json={'username': 'username', 'password': 'password'})

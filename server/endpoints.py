@@ -49,7 +49,7 @@ TEXT_EP = '/text'
 MANU_EP = '/manuscript'
 LOGIN_EP = '/login'
 REGISTER_EP = "/register"
-USER_EP = "/user"
+USER_EP = "/users"
 
 MESSAGE = "Message"
 RETURN = 'return'
@@ -531,6 +531,74 @@ LOGIN_FLDS = api.model('LoginEntry', {
     'password': fields.String,
 })
 
+
+@api.route(USER_EP)
+class Users(Resource):
+    """
+    This class handles user management.
+    """
+
+    def get(self):
+        """
+        Retrieve all users.
+        """
+        return us.get_users()
+
+
+REGISTER_FLDS = api.model('RegisterEntry', {
+    'username': fields.String(required=True),
+    'level': fields.Integer(default=0),
+    'password': fields.String(required=True),
+})
+
+@api.route(f'{USER_EP}/<username>')
+class User(Resource):
+    """
+    This class handles user management.
+    """
+
+    def get(self, username):
+        """
+        Retrieve a specific user.
+        """
+        user = us.get_users().get(username)
+        if user:
+            return user
+        else:
+            raise wz.NotFound(f'No such user: {username}')
+
+
+    @api.response(HTTPStatus.OK, 'Success')
+    @api.response(HTTPStatus.NOT_FOUND, 'No such user.')
+    def delete(self, username):
+        """
+        Delete a specific user.
+        """
+        ret = us.delete_user(username)
+        if ret is not None:
+            return {'Deleted': ret}
+        else:
+            raise wz.NotFound(f'No such user: {username}')
+
+
+    @api.response(HTTPStatus.OK, 'Success')
+    @api.response(HTTPStatus.NOT_ACCEPTABLE, 'Not acceptable')
+    @api.expect(REGISTER_FLDS)
+    def put(self, username):
+        """
+        Update a specific user.
+        """
+        try:
+            password = request.json.get("password")
+            level = request.json.get("level", 0)
+            ret = us.update_user(username, password, level)
+        except Exception as err:
+            raise wz.NotAcceptable(f'Could not update user: '
+                                   f'{err=}')
+        return {
+            MESSAGE: 'User updated!',
+            RETURN: ret,
+        }
 
 @api.route(LOGIN_EP)
 class Login(Resource):

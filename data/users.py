@@ -30,7 +30,8 @@ def get_users():
         value.
     """
     return dbc.read_dict(USERS_COLLECT, USERNAME)
-
+    # users = dbc.read(USERS_COLLECT)
+    # return {user[USERNAME]: {PASSWORD: user.get(PASSWORD), LEVEL: user.get(LEVEL, 0)} for user in users if USERNAME in user}
 
 def add_user(username, password, level=0):
     if len(username) < MIN_USER_NAME_LEN:
@@ -65,7 +66,7 @@ def update_user(username, password, level):
 
 
 def verify_password(username, password):
-    user = dbc.read_one(collection=USERS_COLLECT, filt={"_id": username})
+    user = dbc.read_one(collection=USERS_COLLECT, filt={USERNAME: username})
     if user and PASSWORD in user:
         return user[PASSWORD] == password
     return False
