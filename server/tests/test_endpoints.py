@@ -59,7 +59,7 @@ def test_read(mock_read):
 @patch('data.people.read_one', autospec=True,
        return_value={NAME: 'Yuzuka Rao'})
 def test_read_one(mock_read):
-    resp = TEST_CLIENT.get(f'{ep.PEOPLE_EP}/mock_id')
+    resp = TEST_CLIENT.get(f'{ep.PEOPLE_EP}/mock_id/someone')
     assert resp.status_code == OK
     assert resp.json == {ep.NAME: 'Yuzuka Rao'}
 
@@ -70,9 +70,11 @@ def test_read_one_not_found(mock_read):
     assert resp.status_code == NOT_FOUND
 
 
+PERSON_PATH = f"{ep.PEOPLE_EP}/mock_id/test_user"
+@patch('security.security.is_permitted', autospec=True, return_value=True)
 @patch('data.people.delete', autospec=True, return_value='mock_id')
-def test_delete_person_success(mock_delete):
-    resp = TEST_CLIENT.delete(f'{ep.PEOPLE_EP}/mock_id')
+def test_delete_person_success(_, mock_delete):
+    resp = TEST_CLIENT.delete(PERSON_PATH)
     assert resp.status_code == OK
 
 
@@ -82,20 +84,26 @@ def test_delete_person_not_there(mock_delete):
     assert resp.status_code == NOT_FOUND
 
 
+@patch('security.security.is_permitted', autospec=True, return_value=True)
 @patch('data.people.update', autospec=True, return_value='mock_email')
 @patch('data.people.is_valid_email', autospec=True, return_value=True)
-def test_update_person(mock_update, mock_is_valid):
-    resp = TEST_CLIENT.put(f'{ep.PEOPLE_EP}/mock_id',
-                           json={'name': 'name', 'affiliation': 'affiliation', 'roles': 'roles'})
+def test_update_person(_, mock_update, mock_is_valid):
+    resp = TEST_CLIENT.put(
+        PERSON_PATH,
+        json={'name': 'name', 'affiliation': 'affiliation', 'roles': 'roles'}
+    )
     assert resp.status_code == OK
     assert resp.json == {ep.MESSAGE: 'Person updated!', ep.RETURN: 'mock_email'}
 
 
+@patch('security.security.is_permitted', autospec=True, return_value=True)
 @patch('data.people.update', autospec=True, side_effect=ValueError)
 @patch('data.people.is_valid_email', autospec=True)
-def test_update_person_error(mock_update, mock_is_valid):
-    resp = TEST_CLIENT.put(f'{ep.PEOPLE_EP}/mock_id',
-                           json={'name': 'name', 'affiliation': 'affiliation', 'roles': 'roles'})
+def test_update_person_error(_, mock_update, mock_is_valid):
+    resp = TEST_CLIENT.put(
+        PERSON_PATH,
+        json={'name': 'name', 'affiliation': 'affiliation', 'roles': 'roles'}
+    )
     assert resp.status_code == NOT_ACCEPTABLE
 
 
