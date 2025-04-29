@@ -104,6 +104,18 @@ TEST_RECS = {
                 LOGIN: True,
             },
         },
+        READ: {
+            USER_LIST: [],
+            CHECKS: {
+                LOGIN: True,
+            },
+        },
+        UPDATE: {
+            USER_LIST: [GOOD_USER_ID],
+            CHECKS: {
+                LOGIN: True,
+            },
+        },
         DELETE: {
             USER_LIST: [GOOD_USER_ID],
             CHECKS: {
@@ -203,6 +215,23 @@ def check_ip(user_id: str, **kwargs):
         return False
     # we would check user's IP address here
     return True
+
+
+def get_user_roles(user_id: str) -> list:
+    """
+    Placeholder function to get user roles from the database or another source.
+    Replace this with your actual implementation.
+    """
+
+    if user_id == "elaine@nyu.edu":
+        return ["ED", "AU"]
+    else:
+        return ["AU"]
+
+
+def check_role(user_id: str, required_role: str, **kwargs):
+    user_roles = get_user_roles(user_id)
+    return required_role in user_roles
 
 
 def dual_factor(user_id: str, **kwargs):
