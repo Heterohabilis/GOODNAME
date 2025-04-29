@@ -64,7 +64,18 @@ DUAL_FACTOR = 'dual_factor'
 # Features:
 PEOPLE = 'people'
 TEXTS = 'texts'
+MANUSCRIPT = 'manuscript'
 BAD_FEATURE = 'baaaad feature'
+
+ACCEPT = 'ACC'
+ASSIGN_REF = 'ARF'
+DELETE_REF = 'DRF'  #
+DONE = 'DON'
+REJECT = 'REJ'
+WITHDRAW = 'WIT'  #
+REMOVE_REF = 'RRF'
+SUBMIT_REVIEW = 'SBR'
+ACCEPT_WITH_REVISIONS = 'AWR'
 
 PEOPLE_MISSING_ACTION = READ
 GOOD_USER_ID = 'elaine@nyu.edu'
@@ -77,6 +88,7 @@ PEOPLE_CHANGE_PERMISSIONS = {
         LOGIN: True,
     },
 }
+
 
 # These will come from the DB soon:
 TEST_RECS = {
@@ -101,6 +113,67 @@ TEST_RECS = {
             },
         },
     },
+    MANUSCRIPT: {
+        ACCEPT: {
+            USER_LIST: [GOOD_USER_ID],
+            CHECKS: {
+                LOGIN: True,
+            },
+        },
+        ASSIGN_REF :{
+            USER_LIST: [GOOD_USER_ID],
+            CHECKS: {
+                LOGIN: True,
+            },
+        },
+        DELETE_REF :{
+            USER_LIST: [GOOD_USER_ID],
+            CHECKS: {
+                LOGIN: True,
+            },
+        },
+        DONE: {
+            USER_LIST: [GOOD_USER_ID],
+            CHECKS: {
+                LOGIN: True,
+            },
+        },
+        REJECT :{
+            USER_LIST: [GOOD_USER_ID],
+            CHECKS: {
+                LOGIN: True,
+            },
+        },
+        REMOVE_REF: {
+            USER_LIST: [GOOD_USER_ID],
+            CHECKS: {
+                LOGIN: True,
+            },
+        },
+        SUBMIT_REVIEW :{
+            USER_LIST: [GOOD_USER_ID],
+            CHECKS: {
+                LOGIN: True,
+            },
+        },
+        WITHDRAW :{
+            USER_LIST: [GOOD_USER_ID],
+            CHECKS: {
+                LOGIN: True,
+                IP_ADDR: True,
+                DUAL_FACTOR: True,
+            },
+        },
+        ACCEPT_WITH_REVISIONS :{
+            USER_LIST: [GOOD_USER_ID],
+            CHECKS: {
+                LOGIN: True,
+                IP_ADDR: True,
+                DUAL_FACTOR: True,
+            },
+        },
+    },
+
     BAD_FEATURE: {
         CREATE: {
             USER_LIST: [GOOD_USER_ID],
