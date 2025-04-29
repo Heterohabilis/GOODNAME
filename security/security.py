@@ -67,7 +67,7 @@ TEXTS = 'texts'
 BAD_FEATURE = 'baaaad feature'
 
 PEOPLE_MISSING_ACTION = READ
-GOOD_USER_ID = 'ejc369@nyu.edu'
+GOOD_USER_ID = 'elaine@nyu.edu'
 
 security_recs = None
 
