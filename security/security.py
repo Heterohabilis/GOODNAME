@@ -120,13 +120,13 @@ TEST_RECS = {
                 LOGIN: True,
             },
         },
-        ASSIGN_REF :{
+        ASSIGN_REF: {
             USER_LIST: [GOOD_USER_ID],
             CHECKS: {
                 LOGIN: True,
             },
         },
-        DELETE_REF :{
+        DELETE_REF: {
             USER_LIST: [GOOD_USER_ID],
             CHECKS: {
                 LOGIN: True,
@@ -138,7 +138,7 @@ TEST_RECS = {
                 LOGIN: True,
             },
         },
-        REJECT :{
+        REJECT: {
             USER_LIST: [GOOD_USER_ID],
             CHECKS: {
                 LOGIN: True,
@@ -150,13 +150,13 @@ TEST_RECS = {
                 LOGIN: True,
             },
         },
-        SUBMIT_REVIEW :{
+        SUBMIT_REVIEW: {
             USER_LIST: [GOOD_USER_ID],
             CHECKS: {
                 LOGIN: True,
             },
         },
-        WITHDRAW :{
+        WITHDRAW: {
             USER_LIST: [GOOD_USER_ID],
             CHECKS: {
                 LOGIN: True,
@@ -164,7 +164,7 @@ TEST_RECS = {
                 DUAL_FACTOR: True,
             },
         },
-        ACCEPT_WITH_REVISIONS :{
+        ACCEPT_WITH_REVISIONS: {
             USER_LIST: [GOOD_USER_ID],
             CHECKS: {
                 LOGIN: True,

@@ -5,7 +5,7 @@ The endpoint called `endpoints` will return all available endpoints.
 from http import HTTPStatus
 
 from flask import Flask, request
-from flask_restx import Resource, Api, fields, Namespace     # fields
+from flask_restx import Resource, Api, fields, Namespace  # fields
 from flask_cors import CORS
 
 import werkzeug.exceptions as wz
@@ -20,7 +20,6 @@ import examples.form as fm
 import data.users as us
 from server.endpoints_param import ENDPOINT_PARAMS
 import security.security as sec
-
 
 # import werkzeug.exceptions as wz
 
@@ -128,6 +127,7 @@ class People(Resource):
     This class handles creating, reading, updating
     and deleting journal people.
     """
+
     def get(self):
         """
         Retrieve the journal people.
@@ -141,7 +141,6 @@ PEOPLE_UPDATE_FLDS = api.model('UpdatePeopleEntry', {
     ppl.ROLES: fields.List(fields.String),
 })
 
-
 EDITOR = 'editor'
 
 
@@ -151,6 +150,7 @@ class Person(Resource):
     This class handles creating, reading, updating
     and deleting journal people.
     """
+
     def get(self, email, user_id):
         """
         Retrieve a journal person.
@@ -242,6 +242,7 @@ class SetAffiliation(Resource):
     """
     This endpoint is for setting affiliation
     """
+
     @api.response(HTTPStatus.OK, 'Success')
     @api.response(HTTPStatus.NOT_ACCEPTABLE, 'Not acceptable')
     @api.expect(AFF_SET_FLDS)
@@ -270,6 +271,7 @@ class Texts(Resource):
     """
     This class handles creating, reading, updating and deleting text.
     """
+
     def get(self):
         return tx.read()
 
@@ -285,6 +287,7 @@ class Text(Resource):
     """
     This class handles creating, reading, updating and deleting text.
     """
+
     def get(self, _id):
         text = tx.read_one(_id)
         if text:
@@ -354,6 +357,7 @@ class Masthead(Resource):
     """
     Get a journal's masthead.
     """
+
     def get(self):
         return {MASTHEAD: ppl.get_masthead()}
 
@@ -379,6 +383,7 @@ class Manuscript(Resource):
     """
     This class handles creating, reading, updating and deleting a manuscript.
     """
+
     def get(self, _id):
         manuscript = qy.read_one(_id)
         if manuscript:
@@ -433,6 +438,7 @@ class ManuCreate(Resource):
     """
     This class handles creating a manuscript
     """
+
     @api.response(HTTPStatus.OK, 'Success')
     @api.response(HTTPStatus.NOT_ACCEPTABLE, 'Not acceptable')
     @api.expect(MANU_CREATE_FLDS)
@@ -472,7 +478,7 @@ class ManuUpdateState(Resource):
             if not sec.is_permitted(sec.MANUSCRIPT, action, user_id,
                                     **kwargs):
                 raise wz.Forbidden('This user does not have '
-                               + 'authorization for this action.')
+                                   + 'authorization for this action.')
             if action == qy.ASSIGN_REF or qy.DELETE_REF:
                 ref = request.json.get(qy.REFEREE)
                 ret = qy.update_state(_id, action, referee=ref)
@@ -501,6 +507,7 @@ class ReceiveAction(Resource):
     """
     Receive an action for a manuscript.
     """
+
     @api.response(HTTPStatus.OK, 'Success')
     @api.response(HTTPStatus.NOT_ACCEPTABLE, 'Not acceptable')
     @api.expect(MANU_ACTION_FLDS)
@@ -530,6 +537,7 @@ class Roles(Resource):
     """
     This endpoint returns available roles for people.
     """
+
     def get(self):
         return rf.get_form()
 
@@ -539,6 +547,7 @@ class Actions(Resource):
     """
     Return all possible manuscript actions grouped by state.
     """
+
     def get(self):
         return af.get_form()
 
