@@ -282,13 +282,13 @@ TEXT_UPDATE_FLDS = api.model('UpdateTextEntry', {
 })
 
 
-@api.route(f'{TEXT_EP}/<_id>')
+@api.route(f'{TEXT_EP}/<_id>/<user_id>')
 class Text(Resource):
     """
     This class handles creating, reading, updating and deleting text.
     """
 
-    def get(self, _id):
+    def get(self, _id, user_id):
         text = tx.read_one(_id)
         if text:
             return text
@@ -297,17 +297,29 @@ class Text(Resource):
 
     @api.response(HTTPStatus.OK, 'Success.')
     @api.response(HTTPStatus.NOT_FOUND, 'No such text.')
-    def delete(self, _id):
+    def delete(self, _id, user_id):
+        kwargs = {sec.LOGIN_KEY: 'any key for now'}
+        if not sec.is_permitted(sec.TEXTS, sec.DELETE, user_id,
+                                **kwargs):
+            raise wz.Forbidden('This user does not have '
+                               + 'authorization for this action.')
         ret = tx.delete(_id)
         if ret is not None:
             return {'Deleted': ret}
         else:
             raise wz.NotFound(f'No such text: {_id}')
 
-    @api.response(HTTPStatus.OK, 'Success')
     @api.response(HTTPStatus.NOT_ACCEPTABLE, 'Not acceptable')
     @api.expect(TEXT_UPDATE_FLDS)
-    def put(self, _id):
+    def put(self, _id, user_id):
+        """
+        Update the journal text.
+        """
+        kwargs = {sec.LOGIN_KEY: 'any key for now'}
+        if not sec.is_permitted(sec.TEXTS, sec.UPDATE, user_id,
+                                **kwargs):
+            raise wz.Forbidden('This user does not have '
+                               + 'authorization for this action.')
         try:
             title = _id
             text = request.json.get(tx.TEXT)

@@ -135,41 +135,47 @@ def test_get_text(mock_read):
         assert TITLE in text
 
 
+@patch('security.security.is_permitted', autospec=True, return_value=True)
 @patch('data.text.read_one', autospec=True, return_value={TITLE: 'Title'})
-def test_get_text_one(mock_read_one):
-    resp = TEST_CLIENT.get(f'{ep.TEXT_EP}/key')
+def test_get_text_one(mock_read_one, mock_is_permitted):
+    resp = TEST_CLIENT.get(f'{ep.TEXT_EP}/key/user_id')
     assert resp.status_code == OK
 
 
+@patch('security.security.is_permitted', autospec=True, return_value=True)
 @patch('data.text.read_one', autospec=True, return_value=None)
-def test_get_text_one_not_found(mock_read_one):
-    resp = TEST_CLIENT.get(f'{ep.TEXT_EP}/key')
+def test_get_text_one_not_found(mock_read_one, mock_is_permitted):
+    resp = TEST_CLIENT.get(f'{ep.TEXT_EP}/key/user_id')
     assert resp.status_code == NOT_FOUND
 
 
+@patch('security.security.is_permitted', autospec=True, return_value=True)
 @patch('data.text.delete', autospec=True, return_value='key')
-def test_delete_text(mock_delete):
-    resp = TEST_CLIENT.delete(f'{ep.TEXT_EP}/key')
+def test_delete_text(mock_delete, mock_is_permitted):
+    resp = TEST_CLIENT.delete(f'{ep.TEXT_EP}/key/user_id')
     assert resp.status_code == OK
 
 
+@patch('security.security.is_permitted', autospec=True, return_value=True)
 @patch('data.text.delete', autospec=True, return_value=None)
-def test_delete_text_not_found(mock_delete):
-    resp = TEST_CLIENT.delete(f'{ep.TEXT_EP}/key')
+def test_delete_text_not_found(mock_delete, mock_is_permitted):
+    resp = TEST_CLIENT.delete(f'{ep.TEXT_EP}/key/user_id')
     assert resp.status_code == NOT_FOUND
 
 
+@patch('security.security.is_permitted', autospec=True, return_value=True)
 @patch('data.text.update', autospec=True, return_value='key')
-def test_update_text(mock_update):
-    resp = TEST_CLIENT.put(f'{ep.TEXT_EP}/key',
+def test_update_text(mock_update, mock_is_permitted):
+    resp = TEST_CLIENT.put(f'{ep.TEXT_EP}/key/user_id',
                            json={'title': 'Title', 'text': 'Text', 'email': 'mock_email'})
     assert resp.status_code == OK
     assert resp.json == {ep.MESSAGE: 'Text updated!', ep.RETURN: 'key'}
 
 
+@patch('security.security.is_permitted', autospec=True, return_value=True)
 @patch('data.text.update', autospec=True, side_effect=ValueError)
-def test_update_text_error(mock_update):
-    resp = TEST_CLIENT.put(f'{ep.TEXT_EP}/key',
+def test_update_text_error(mock_update, mock_is_permitted):
+    resp = TEST_CLIENT.put(f'{ep.TEXT_EP}/key/user_id',
                            json={'title': 'Title', 'Text': 'text', 'email': 'mock_email'})
     assert resp.status_code == NOT_ACCEPTABLE
 
