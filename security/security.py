@@ -1,5 +1,5 @@
 from functools import wraps
-
+import data.users as users
 # import data.db_connect as dbc
 
 """
@@ -202,6 +202,14 @@ def is_valid_key(user_id: str, login_key: str):
     This is just a mock of the real is_valid_key() we'll write later.
     """
     return True
+
+
+def check_level_admin(user_id: str, **kwargs) -> bool:
+    all_users = users.get_users()
+    user = all_users.get(user_id)
+    if user and 'level' in user:
+        return user['level'] == 1
+    return False
 
 
 def check_login(user_id: str, **kwargs):
