@@ -77,6 +77,8 @@ REMOVE_REF = 'RRF'
 SUBMIT_REVIEW = 'SBR'
 ACCEPT_WITH_REVISIONS = 'AWR'
 LEVEL_ADMIN = "level_admin"
+LEVEL = "level"
+IS_ADMIN = 1
 
 PEOPLE_MISSING_ACTION = READ
 GOOD_USER_ID = 'elaine@nyu.edu'
@@ -208,8 +210,8 @@ def is_valid_key(user_id: str, login_key: str):
 def check_level_admin(user_id: str, **kwargs) -> bool:
     all_users = users.get_users()
     user = all_users.get(user_id)
-    if user and 'level' in user:
-        return user['level'] == 1
+    if user and LEVEL in user:
+        return user[LEVEL] == IS_ADMIN
     return False
 
 
