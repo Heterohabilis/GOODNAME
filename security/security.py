@@ -76,6 +76,7 @@ WITHDRAW = 'WIT'  #
 REMOVE_REF = 'RRF'
 SUBMIT_REVIEW = 'SBR'
 ACCEPT_WITH_REVISIONS = 'AWR'
+LEVEL_ADMIN = "level_admin"
 
 PEOPLE_MISSING_ACTION = READ
 GOOD_USER_ID = 'elaine@nyu.edu'
@@ -250,6 +251,7 @@ CHECK_FUNCS = {
     LOGIN: check_login,
     IP_ADDR: check_ip,
     DUAL_FACTOR: dual_factor,
+    LEVEL_ADMIN: check_level_admin,
 }
 
 
