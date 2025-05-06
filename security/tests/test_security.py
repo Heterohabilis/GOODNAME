@@ -1,6 +1,23 @@
 import pytest
 
 import security.security as sec
+import data.users as users
+
+
+def dummy_get_users():
+    return {
+        "tt33@we.pn": {
+            "username": "tt33@we.pn",
+            "level": 0
+        },
+        "xm2204@nyu.edu": {
+            "username": "xm2204@nyu.edu",
+            "level": 1
+        }
+    }
+
+
+users.get_users = dummy_get_users
 
 
 def test_check_login_good():
@@ -42,6 +59,8 @@ def test_is_permitted_bad_check():
         sec.is_permitted(sec.BAD_FEATURE, sec.CREATE, sec.GOOD_USER_ID)
 
 
-def test_is_permitted_all_good():
-    assert sec.is_permitted(sec.PEOPLE, sec.CREATE, sec.GOOD_USER_ID,
-                            login_key='any key for now')
+def test_is_permitted_level_admin_pass():
+    assert sec.is_permitted(sec.PEOPLE, sec.UPDATE, "xm2204@nyu.edu")
+
+def test_is_permitted_level_admin_fail():
+    assert not sec.is_permitted(sec.PEOPLE, sec.UPDATE, 'tt33@we.pn')

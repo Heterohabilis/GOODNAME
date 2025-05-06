@@ -183,7 +183,7 @@ class Person(Resource):
         Update the journal person.
         """
         kwargs = {sec.LOGIN_KEY: 'any key for now'}
-        if not sec.is_permitted(sec.PEOPLE, sec.DELETE, user_id,
+        if not sec.is_permitted(sec.PEOPLE, sec.UPDATE, user_id,
                                 **kwargs):
             raise wz.Forbidden('This user does not have '
                                + 'authorization for this action.')

@@ -86,9 +86,9 @@ GOOD_USER_ID = 'elaine@nyu.edu'
 security_recs = None
 
 PEOPLE_CHANGE_PERMISSIONS = {
-    USER_LIST: [GOOD_USER_ID],
+    # USER_LIST: [GOOD_USER_ID],
     CHECKS: {
-        LOGIN: True,
+        LEVEL_ADMIN: True,
     },
 }
 
@@ -210,6 +210,7 @@ def is_valid_key(user_id: str, login_key: str):
 def check_level_admin(user_id: str, **kwargs) -> bool:
     all_users = users.get_users()
     user = all_users.get(user_id)
+    print("all_users.keys() =", all_users.keys())
     if user and LEVEL in user:
         return user[LEVEL] == IS_ADMIN
     return False
@@ -289,6 +290,7 @@ def read_feature(feature_name: str) -> dict:
 def is_permitted(feature_name: str, action: str,
                  user_id: str, **kwargs) -> bool:
     prot = read_feature(feature_name)
+    # print(feature_name, action, user_id, kwargs, prot, sep=';')
     if prot is None:
         return True
     if action not in prot:
