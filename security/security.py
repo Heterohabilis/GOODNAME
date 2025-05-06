@@ -92,6 +92,17 @@ PEOPLE_CHANGE_PERMISSIONS = {
     },
 }
 
+TEXTS_CHANGE_PERMISSIONS = {
+    CHECKS: {
+        LEVEL_ADMIN: True,
+    },
+}
+
+MANUSCRIPT_CHANGE_PERMISSIONS = {
+    CHECKS: {
+        LEVEL_ADMIN: True,
+    },
+}
 
 # These will come from the DB soon:
 TEST_RECS = {
@@ -101,92 +112,20 @@ TEST_RECS = {
         UPDATE: PEOPLE_CHANGE_PERMISSIONS,
     },
     TEXTS: {
-        CREATE: {
-            USER_LIST: [GOOD_USER_ID],
-            CHECKS: {
-                LOGIN: True,
-            },
-        },
-        READ: {
-            USER_LIST: [],
-            CHECKS: {
-                LOGIN: True,
-            },
-        },
-        UPDATE: {
-            USER_LIST: [GOOD_USER_ID],
-            CHECKS: {
-                LOGIN: True,
-            },
-        },
-        DELETE: {
-            USER_LIST: [GOOD_USER_ID],
-            CHECKS: {
-                LOGIN: True,
-                IP_ADDR: True,
-                DUAL_FACTOR: True,
-            },
-        },
+        CREATE: TEXTS_CHANGE_PERMISSIONS,
+        UPDATE: TEXTS_CHANGE_PERMISSIONS,
+        DELETE: TEXTS_CHANGE_PERMISSIONS,
     },
     MANUSCRIPT: {
-        ACCEPT: {
-            USER_LIST: [GOOD_USER_ID],
-            CHECKS: {
-                LOGIN: True,
-            },
-        },
-        ASSIGN_REF: {
-            USER_LIST: [GOOD_USER_ID],
-            CHECKS: {
-                LOGIN: True,
-            },
-        },
-        DELETE_REF: {
-            USER_LIST: [GOOD_USER_ID],
-            CHECKS: {
-                LOGIN: True,
-            },
-        },
-        DONE: {
-            USER_LIST: [GOOD_USER_ID],
-            CHECKS: {
-                LOGIN: True,
-            },
-        },
-        REJECT: {
-            USER_LIST: [GOOD_USER_ID],
-            CHECKS: {
-                LOGIN: True,
-            },
-        },
-        REMOVE_REF: {
-            USER_LIST: [GOOD_USER_ID],
-            CHECKS: {
-                LOGIN: True,
-            },
-        },
-        SUBMIT_REVIEW: {
-            USER_LIST: [GOOD_USER_ID],
-            CHECKS: {
-                LOGIN: True,
-            },
-        },
-        WITHDRAW: {
-            USER_LIST: [GOOD_USER_ID],
-            CHECKS: {
-                LOGIN: True,
-                IP_ADDR: True,
-                DUAL_FACTOR: True,
-            },
-        },
-        ACCEPT_WITH_REVISIONS: {
-            USER_LIST: [GOOD_USER_ID],
-            CHECKS: {
-                LOGIN: True,
-                IP_ADDR: True,
-                DUAL_FACTOR: True,
-            },
-        },
+        ACCEPT: MANUSCRIPT_CHANGE_PERMISSIONS,
+        ASSIGN_REF: MANUSCRIPT_CHANGE_PERMISSIONS,
+        DELETE_REF: MANUSCRIPT_CHANGE_PERMISSIONS,
+        DONE: MANUSCRIPT_CHANGE_PERMISSIONS,
+        REJECT: MANUSCRIPT_CHANGE_PERMISSIONS,
+        REMOVE_REF: MANUSCRIPT_CHANGE_PERMISSIONS,
+        SUBMIT_REVIEW: MANUSCRIPT_CHANGE_PERMISSIONS,
+        WITHDRAW: MANUSCRIPT_CHANGE_PERMISSIONS,
+        ACCEPT_WITH_REVISIONS: MANUSCRIPT_CHANGE_PERMISSIONS,
     },
 
     BAD_FEATURE: {
