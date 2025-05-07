@@ -1,6 +1,7 @@
 from functools import wraps
 import data.users as users
-# import data.db_connect as dbc
+import data.db_connect as dbc
+from data.db_connect import create, fetch_all_as_dict, SE_DB
 
 """
 Our record format to meet our requirements (see security.md) will be:
@@ -104,6 +105,8 @@ MANUSCRIPT_CHANGE_PERMISSIONS = {
     },
 }
 
+'''
+
 # These will come from the DB soon:
 TEST_RECS = {
     PEOPLE: {
@@ -137,7 +140,7 @@ TEST_RECS = {
         },
     },
 }
-
+'''
 
 def is_valid_key(user_id: str, login_key: str):
     """
@@ -199,9 +202,69 @@ CHECK_FUNCS = {
 
 def read() -> dict:
     global security_recs
-    # dbc.read()
-    security_recs = TEST_RECS
+    # Replace the hard-coded test records with database fetch
+    connect_db()
+    security_recs = fetch_all_as_dict('feature', COLLECT_NAME, SE_DB)
+    if not security_recs:  # If the collection is empty, initialize it
+        initialize_security_records()
+        security_recs = fetch_all_as_dict('feature', COLLECT_NAME, SE_DB)
     return security_recs
+
+
+def initialize_security_records():
+    connect_db()
+    
+    records = [
+        {
+            'feature': PEOPLE,
+            'permissions': {
+                CREATE: PEOPLE_CHANGE_PERMISSIONS,
+                DELETE: PEOPLE_CHANGE_PERMISSIONS,
+                UPDATE: PEOPLE_CHANGE_PERMISSIONS,
+            }
+        },
+        {
+            'feature': TEXTS,
+            'permissions': {
+                CREATE: TEXTS_CHANGE_PERMISSIONS,
+                UPDATE: TEXTS_CHANGE_PERMISSIONS,
+                DELETE: TEXTS_CHANGE_PERMISSIONS,
+            }
+        },
+        {
+            'feature': MANUSCRIPT,
+            'permissions': {
+                ACCEPT: MANUSCRIPT_CHANGE_PERMISSIONS,
+                ASSIGN_REF: MANUSCRIPT_CHANGE_PERMISSIONS,
+                DELETE_REF: MANUSCRIPT_CHANGE_PERMISSIONS,
+                DONE: MANUSCRIPT_CHANGE_PERMISSIONS,
+                REJECT: MANUSCRIPT_CHANGE_PERMISSIONS,
+                REMOVE_REF: MANUSCRIPT_CHANGE_PERMISSIONS,
+                SUBMIT_REVIEW: MANUSCRIPT_CHANGE_PERMISSIONS,
+                WITHDRAW: MANUSCRIPT_CHANGE_PERMISSIONS,
+                ACCEPT_WITH_REVISIONS: MANUSCRIPT_CHANGE_PERMISSIONS,
+            }
+        },
+        {
+            'feature': BAD_FEATURE,
+            'permissions': {
+                CREATE: {
+                    USER_LIST: [GOOD_USER_ID],
+                    CHECKS: {
+                        'Bad check': True,
+                    },
+                },
+            }
+        }
+    ]
+    
+    for record in records:
+        create(COLLECT_NAME, record)
+
+
+def connect_db():
+    import data.db_connect as dbc
+    return dbc.connect_db()
 
 
 def needs_recs(fn):
@@ -220,7 +283,7 @@ def needs_recs(fn):
 @needs_recs
 def read_feature(feature_name: str) -> dict:
     if feature_name in security_recs:
-        return security_recs[feature_name]
+        return security_recs[feature_name]['permissions']
     else:
         return None
 
@@ -245,3 +308,17 @@ def is_permitted(feature_name: str, action: str,
         if not CHECK_FUNCS[check](user_id, **kwargs):
             return False
     return True
+
+
+
+def main():
+    connect_db()
+    print("Initializing security records...")
+    security_data = read()
+    print(f"Security records initialized. Found {len(security_data)} features:")
+    for feature in security_data:
+        print(f"  - {feature}")
+
+
+if __name__ == '__main__':
+    main()
