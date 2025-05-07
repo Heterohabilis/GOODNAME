@@ -142,6 +142,7 @@ TEST_RECS = {
 }
 '''
 
+
 def is_valid_key(user_id: str, login_key: str):
     """
     This is just a mock of the real is_valid_key() we'll write later.
@@ -213,7 +214,7 @@ def read() -> dict:
 
 def initialize_security_records():
     connect_db()
-    
+
     records = [
         {
             'feature': PEOPLE,
@@ -257,13 +258,12 @@ def initialize_security_records():
             }
         }
     ]
-    
+
     for record in records:
         create(COLLECT_NAME, record)
 
 
 def connect_db():
-    import data.db_connect as dbc
     return dbc.connect_db()
 
 
@@ -304,20 +304,16 @@ def is_permitted(feature_name: str, action: str,
         return True
     for check in prot[action][CHECKS]:
         if check not in CHECK_FUNCS:
-            raise ValueError(f'Bad check passed to is_permitted: {check}')
+            raise ValueError(
+                f'Bad check passed to is_permitted: {check}'
+            )
         if not CHECK_FUNCS[check](user_id, **kwargs):
             return False
     return True
 
 
-
 def main():
     connect_db()
-    print("Initializing security records...")
-    security_data = read()
-    print(f"Security records initialized. Found {len(security_data)} features:")
-    for feature in security_data:
-        print(f"  - {feature}")
 
 
 if __name__ == '__main__':
