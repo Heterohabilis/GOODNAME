@@ -109,19 +109,27 @@ def test_update_person_error(_, mock_update, mock_is_valid):
 
 @patch('data.people.create', autospec=True, return_value='mock_email')
 @patch('data.people.is_valid_email', autospec=True, return_value=True)
-def test_create_person_success(mock_create, mock_is_valid):
-    resp = TEST_CLIENT.put(f'{ep.PEOPLE_EP}/create',
-                           json={'name': 'name', 'affiliation': 'affiliation', 'email': 'mock_email'})
+@patch('security.security.is_permitted', autospec=True, return_value=True)
+def test_create_person_success(mock_create, mock_is_valid, mock_is_permitted):
+    resp = TEST_CLIENT.put(
+        f'{ep.PEOPLE_EP}/create?user_id=test_user',
+        json={'name': 'name', 'affiliation': 'affiliation', 'email': 'mock_email', 'roles': 'Editor'}
+    )
     assert resp.status_code == OK
     assert resp.json == {ep.MESSAGE: 'Person added!', ep.RETURN: 'mock_email'}
 
 
+
 @patch('data.people.create', autospec=True, side_effect=ValueError)
 @patch('data.people.is_valid_email', autospec=True)
-def test_create_person_error(mock_create, mock_is_valid):
-    resp = TEST_CLIENT.put(f'{ep.PEOPLE_EP}/create',
-                           json={'name': 'name', 'affiliation': 'affiliation', 'email': 'mock_email'})
+@patch('security.security.is_permitted', autospec=True, return_value=True)
+def test_create_person_error(mock_create, mock_is_valid, mock_is_permitted):
+    resp = TEST_CLIENT.put(
+        f'{ep.PEOPLE_EP}/create?user_id=test_user',
+        json={'name': 'name', 'affiliation': 'affiliation', 'email': 'mock_email', 'roles': 'Editor'}
+    )
     assert resp.status_code == NOT_ACCEPTABLE
+
 
 
 @patch('data.text.read', autospec=True, return_value={'key': {TITLE: 'Title'}})
