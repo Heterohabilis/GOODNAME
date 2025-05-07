@@ -43,7 +43,7 @@ def add_user(username, password, level=0):
         return {"error": "User already exists."}
 
     person = ppl.read_one(username)
-    if ppl.has_role(person, rls.ED_CODE):
+    if person and ppl.has_role(person, rls.ED_CODE):
         level = 1
 
     dbc.create(collection=USERS_COLLECT,
