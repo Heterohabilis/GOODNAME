@@ -2,6 +2,8 @@
 This module interfaces to our user data.
 """
 import data.db_connect as dbc
+import data.people as ppl
+import data.roles as rls
 
 LEVEL = 'level'
 MIN_USER_NAME_LEN = 2
@@ -39,6 +41,10 @@ def add_user(username, password, level=0):
 
     if exists(username):
         return {"error": "User already exists."}
+
+    person = ppl.read_one(username)
+    if ppl.has_role(person, rls.ED_CODE):
+        level = 1
 
     dbc.create(collection=USERS_COLLECT,
                doc={USERNAME: username, PASSWORD: password, LEVEL: level})
