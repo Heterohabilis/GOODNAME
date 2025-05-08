@@ -7,11 +7,12 @@ TEST_USERNAME = "test_user@gmail.com"
 TEST_PASSWORD = "test_password"
 TEST_LEVEL = 1
 TEST_NAME = 'test_name'
+TEST_AFFILIATION = 'test_affiliation'
 
 
 @pytest.fixture(scope='function')
 def temp_user():
-    us.add_user(TEST_USERNAME, TEST_PASSWORD, TEST_NAME, TEST_LEVEL)
+    us.add_user(TEST_USERNAME, TEST_PASSWORD, TEST_NAME, TEST_AFFILIATION, TEST_LEVEL)
     yield TEST_USERNAME
     us.delete_user(TEST_USERNAME)
 
@@ -27,7 +28,7 @@ def test_not_exists():
 @patch('data.people.create', autospec=True, return_value='test_user@gmail.com')
 def test_add_user(mock_create):
     us.delete_user(TEST_USERNAME)
-    result = us.add_user(TEST_USERNAME, TEST_PASSWORD, TEST_NAME, TEST_LEVEL)
+    result = us.add_user(TEST_USERNAME, TEST_PASSWORD, TEST_NAME, TEST_AFFILIATION, TEST_LEVEL)
     assert "message" in result
     assert us.exists(TEST_USERNAME)
     us.delete_user(TEST_USERNAME)

@@ -414,13 +414,17 @@ def test_developer_params():
 # Registration endpoint tests
 from http import HTTPStatus
 
-@patch('data.users.add_user', autospec=True, return_value={'message': "User 'testuser' registered successfully.", 'user': {'username': 'testuser', 'name': 'Test User', 'role': 'author', 'level': 0}})
+@patch('data.users.add_user', autospec=True,
+       return_value={'message': "User 'testuser' registered successfully.",
+                     'user': {'username': 'testuser', 'name': 'Test User', 'role': 'author',
+                              'affiliation':'affiliation', 'level': 0}})
 def test_register_success(mock_add_user):
     resp = TEST_CLIENT.post(ep.REGISTER_EP, json={
         'username': 'testuser',
         'password': 'securepass',
         'name': 'Test User',
-        'role': 'author'
+        'role': 'author',
+        'affiliation': 'affiliation'
     })
     assert resp.status_code == HTTPStatus.CREATED
     resp_json = resp.get_json()
