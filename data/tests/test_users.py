@@ -52,14 +52,14 @@ def test_delete_user_not_found():
 
 def test_update_user(temp_user):
     new_level = 5
-    result = us.update_user(TEST_USERNAME, TEST_PASSWORD, new_level)
+    result = us.update_user(TEST_USERNAME, TEST_PASSWORD, TEST_NAME, TEST_AFFILIATION, new_level)
     assert "message" in result
     users = us.get_users()
     assert users[TEST_USERNAME][us.LEVEL] == new_level
 
 
 def test_update_user_not_found():
-    result = us.update_user("ghost_user", "pass", 3)
+    result = us.update_user("ghost_user", "pass", "name", "aff", 3)
     assert "error" in result
 
 

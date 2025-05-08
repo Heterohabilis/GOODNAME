@@ -69,14 +69,16 @@ def delete_user(username):
     return {"message": f"User '{username}' deleted successfully."}
 
 
-def update_user(username, password, level):
+def update_user(username, password, name, affiliation, level):
     if not exists(username):
         return {"error": "User not found."}
 
     dbc.update(collection=USERS_COLLECT, filters={USERNAME: username},
-               update_dict={LEVEL: level, password: password})
+               update_dict={LEVEL: level, PASSWORD: password,
+                            NAME: name, AFFILIATION: affiliation})
     return {"message": f"User '{username}' updated successfully.",
-            "user": {USERNAME: username, PASSWORD: password, LEVEL: level}}
+            "user": {USERNAME: username, PASSWORD: password,
+                     LEVEL: level, NAME: name, AFFILIATION: affiliation}}
 
 
 def verify_password(username, password):

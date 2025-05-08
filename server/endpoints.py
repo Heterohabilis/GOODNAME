@@ -593,7 +593,7 @@ class Users(Resource):
         return us.get_users()
 
 
-REGISTER_FLDS = api.model('RegisterEntry', {
+USER_FLDS = api.model('RegisterEntry', {
     'username': fields.String(required=True),
     'level': fields.Integer(default=0),
     'password': fields.String(required=True),
@@ -630,7 +630,7 @@ class User(Resource):
 
     @api.response(HTTPStatus.OK, 'Success')
     @api.response(HTTPStatus.NOT_ACCEPTABLE, 'Not acceptable')
-    @api.expect(REGISTER_FLDS)
+    @api.expect(USER_FLDS)
     def put(self, username):
         """
         Update a specific user.
@@ -638,7 +638,9 @@ class User(Resource):
         try:
             password = request.json.get("password")
             level = request.json.get("level", 0)
-            ret = us.update_user(username, password, level)
+            name = request.json.get("name")
+            affiliation = request.json.get("affiliation")
+            ret = us.update_user(username, password, name, affiliation, level)
         except Exception as err:
             raise wz.NotAcceptable(f'Could not update user: '
                                    f'{err=}')
