@@ -1,7 +1,9 @@
+from unittest.mock import patch
+
 import pytest
 import data.users as us
 
-TEST_USERNAME = "test_user"
+TEST_USERNAME = "test_user@gmail.com"
 TEST_PASSWORD = "test_password"
 TEST_LEVEL = 1
 TEST_NAME = 'test_name'
@@ -22,7 +24,8 @@ def test_not_exists():
     assert not us.exists("non_existent_user")
 
 
-def test_add_user():
+@patch('data.people.create', autospec=True, return_value='test_user@gmail.com')
+def test_add_user(mock_create):
     us.delete_user(TEST_USERNAME)
     result = us.add_user(TEST_USERNAME, TEST_PASSWORD, TEST_NAME, TEST_LEVEL)
     assert "message" in result
@@ -31,7 +34,7 @@ def test_add_user():
 
 
 def test_add_user_duplicate(temp_user):
-    result = us.add_user(temp_user,  TEST_PASSWORD, TEST_NAME, TEST_LEVEL)
+    result = us.add_user(temp_user, TEST_PASSWORD, TEST_NAME, TEST_LEVEL)
     assert "error" in result
 
 
