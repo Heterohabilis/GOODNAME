@@ -683,6 +683,7 @@ REGISTER_FLDS = api.model('RegisterEntry', {
     'username': fields.String(required=True),
     'level': fields.Integer(default=0),
     'password': fields.String(required=True),
+    'name': fields.String(required=True),
 })
 
 
@@ -700,13 +701,14 @@ class Register(Resource):
             username = request.json.get("username")
             password = request.json.get("password")
             level = request.json.get("level", 0)
+            name = request.json.get("name")
 
             if not username:
                 return ({"error": "Username is required."},
                         HTTPStatus.BAD_REQUEST)
 
             result = us.add_user(username=username,
-                                 password=password, level=level)
+                                 password=password, name=name, level=level)
 
             if "error" in result:
                 return result, HTTPStatus.BAD_REQUEST

@@ -12,6 +12,7 @@ client = dbc.connect_db()
 USERS_COLLECT = 'users'
 USERNAME = 'username'
 PASSWORD = 'password'
+NAME = 'name'
 
 
 def exists(username):
@@ -34,7 +35,8 @@ def get_users():
     return dbc.read_dict(USERS_COLLECT, USERNAME)
 
 
-def add_user(username, password, level=0):
+# editor=1, author=0
+def add_user(username, password, name, level=0):
     if len(username) < MIN_USER_NAME_LEN:
         return {"error": f"Username must be at least "
                          f"{MIN_USER_NAME_LEN} characters long."}
@@ -42,12 +44,18 @@ def add_user(username, password, level=0):
     if exists(username):
         return {"error": "User already exists."}
 
-    person = ppl.read_one(username)
-    if person and ppl.has_role(person, rls.ED_CODE):
-        level = 1
+    if level not in [0, 1]:
+        return {"error": "Invalid role specified. Must be 0 or 1."}
 
     dbc.create(collection=USERS_COLLECT,
-               doc={USERNAME: username, PASSWORD: password, LEVEL: level})
+               doc={USERNAME: username, PASSWORD: password,
+                    LEVEL: level, NAME: name})
+    role_name = rls.AUTHOR_CODE if level == 0 else rls.ED_CODE
+    try:
+        ppl.create(name=name, affiliation="",
+                   email=username, role=role_name)
+    except ValueError as e:
+        return {"error": str(e)}
     return {"message": f"User '{username}' registered successfully.",
             "user": {"username": username, LEVEL: level}}
 
