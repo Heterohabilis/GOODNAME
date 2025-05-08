@@ -216,6 +216,16 @@ class PeopleCreate(Resource):
     @api.response(HTTPStatus.NOT_ACCEPTABLE, 'Not acceptable')
     @api.expect(PEOPLE_CREATE_FLDS)
     def put(self):
+        user_id = request.args.get("user_id")
+        kwargs = {sec.LOGIN_KEY: 'any key for now'}
+
+        if not user_id:
+            raise wz.BadRequest('Missing user_id in query parameters.')
+
+        if not sec.is_permitted(sec.PEOPLE, sec.CREATE, user_id, **kwargs):
+            raise wz.Forbidden('This user does not have '
+                               'authorization to create people.')
+
         try:
             name = request.json.get(ppl.NAME)
             affiliation = request.json.get(ppl.AFFILIATION)
@@ -223,8 +233,7 @@ class PeopleCreate(Resource):
             role = request.json.get(ppl.ROLES)
             ret = ppl.create(name, affiliation, email, role)
         except Exception as err:
-            raise wz.NotAcceptable(f'Could not add person: '
-                                   f'{err=}')
+            raise wz.NotAcceptable(f'Could not add person: {err=}')
         return {
             MESSAGE: 'Person added!',
             RETURN: ret,
