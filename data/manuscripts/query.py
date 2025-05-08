@@ -152,7 +152,7 @@ STATE_TABLE = {
         DONE: {
             FUNC: lambda **kwargs: EDITOR_REV,
         },
-        **COMMON_ACTIONS,
+        **COMMON_ACTIONS,  #
     },
     COPY_EDIT: {
         DONE: {
@@ -170,13 +170,13 @@ STATE_TABLE = {
         ACCEPT: {
             FUNC: lambda **kwargs: COPY_EDIT,
         },
-        **COMMON_ACTIONS,
+        **COMMON_ACTIONS,  #
     },
     FORMATTING: {
         DONE: {
             FUNC: lambda **kwargs: PUBLISHED,
         },
-        **COMMON_ACTIONS,
+        **COMMON_ACTIONS,  #
     },
     PUBLISHED: {},
     REJECTED: {
