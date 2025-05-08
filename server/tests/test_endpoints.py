@@ -414,13 +414,17 @@ def test_developer_params():
 # Registration endpoint tests
 from http import HTTPStatus
 
-@patch('data.users.add_user', autospec=True, return_value={'message': "User 'testuser' registered successfully.", 'user': {'username': 'testuser', 'name': 'Test User', 'role': 'author', 'level': 0}})
+@patch('data.users.add_user', autospec=True,
+       return_value={'message': "User 'testuser' registered successfully.",
+                     'user': {'username': 'testuser', 'name': 'Test User', 'role': 'author',
+                              'affiliation':'affiliation', 'level': 0}})
 def test_register_success(mock_add_user):
     resp = TEST_CLIENT.post(ep.REGISTER_EP, json={
         'username': 'testuser',
         'password': 'securepass',
         'name': 'Test User',
-        'role': 'author'
+        'role': 'author',
+        'affiliation': 'affiliation'
     })
     assert resp.status_code == HTTPStatus.CREATED
     resp_json = resp.get_json()
@@ -451,3 +455,52 @@ def test_register_missing_username():
     assert resp.status_code == HTTPStatus.BAD_REQUEST
     resp_json = resp.get_json()
     assert resp_json['error'] == 'Username is required.'
+
+
+@patch('data.users.get_users', autospec=True, return_value={'testuser': {'username': 'testuser', 'level': 0}})
+def test_get_user_success(mock_get_users):
+    resp = TEST_CLIENT.get(f'{ep.USER_EP}/testuser')
+    assert resp.status_code == OK
+    assert resp.get_json()['username'] == 'testuser'
+
+
+@patch('data.users.get_users', autospec=True, return_value={})
+def test_get_user_not_found(mock_get_users):
+    resp = TEST_CLIENT.get(f'{ep.USER_EP}/missinguser')
+    assert resp.status_code == NOT_FOUND
+
+
+@patch('data.users.delete_user', autospec=True, return_value='testuser')
+def test_delete_user_success(mock_delete_user):
+    resp = TEST_CLIENT.delete(f'{ep.USER_EP}/testuser')
+    assert resp.status_code == OK
+    assert resp.get_json() == {'Deleted': 'testuser'}
+
+
+@patch('data.users.delete_user', autospec=True, return_value=None)
+def test_delete_user_not_found(mock_delete_user):
+    resp = TEST_CLIENT.delete(f'{ep.USER_EP}/unknownuser')
+    assert resp.status_code == NOT_FOUND
+
+
+@patch('data.users.update_user', autospec=True, return_value='testuser')
+def test_update_user_success(mock_update_user):
+    resp = TEST_CLIENT.put(f'{ep.USER_EP}/testuser', json={
+        'password': 'newpass',
+        'name': 'New Name',
+        'affiliation': 'Affiliation',
+        'level': 1
+    })
+    assert resp.status_code == OK
+    assert resp.get_json()[ep.MESSAGE] == 'User updated!'
+
+
+@patch('data.users.update_user', autospec=True, side_effect=ValueError('bad update'))
+def test_update_user_error(mock_update_user):
+    resp = TEST_CLIENT.put(f'{ep.USER_EP}/testuser', json={
+        'password': 'newpass',
+        'name': 'New Name',
+        'affiliation': 'Affiliation',
+        'level': 1
+    })
+    assert resp.status_code == NOT_ACCEPTABLE

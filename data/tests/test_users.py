@@ -7,11 +7,12 @@ TEST_USERNAME = "test_user@gmail.com"
 TEST_PASSWORD = "test_password"
 TEST_LEVEL = 1
 TEST_NAME = 'test_name'
+TEST_AFFILIATION = 'test_affiliation'
 
 
 @pytest.fixture(scope='function')
 def temp_user():
-    us.add_user(TEST_USERNAME, TEST_PASSWORD, TEST_NAME, TEST_LEVEL)
+    us.add_user(TEST_USERNAME, TEST_PASSWORD, TEST_NAME, TEST_AFFILIATION, TEST_LEVEL)
     yield TEST_USERNAME
     us.delete_user(TEST_USERNAME)
 
@@ -27,7 +28,7 @@ def test_not_exists():
 @patch('data.people.create', autospec=True, return_value='test_user@gmail.com')
 def test_add_user(mock_create):
     us.delete_user(TEST_USERNAME)
-    result = us.add_user(TEST_USERNAME, TEST_PASSWORD, TEST_NAME, TEST_LEVEL)
+    result = us.add_user(TEST_USERNAME, TEST_PASSWORD, TEST_NAME, TEST_AFFILIATION, TEST_LEVEL)
     assert "message" in result
     assert us.exists(TEST_USERNAME)
     us.delete_user(TEST_USERNAME)
@@ -51,14 +52,14 @@ def test_delete_user_not_found():
 
 def test_update_user(temp_user):
     new_level = 5
-    result = us.update_user(TEST_USERNAME, TEST_PASSWORD, new_level)
+    result = us.update_user(TEST_USERNAME, TEST_PASSWORD, TEST_NAME, TEST_AFFILIATION, new_level)
     assert "message" in result
     users = us.get_users()
     assert users[TEST_USERNAME][us.LEVEL] == new_level
 
 
 def test_update_user_not_found():
-    result = us.update_user("ghost_user", "pass", 3)
+    result = us.update_user("ghost_user", "pass", "name", "aff", 3)
     assert "error" in result
 
 

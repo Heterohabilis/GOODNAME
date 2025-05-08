@@ -13,6 +13,7 @@ USERS_COLLECT = 'users'
 USERNAME = 'username'
 PASSWORD = 'password'
 NAME = 'name'
+AFFILIATION = 'affiliation'
 
 
 def exists(username):
@@ -36,7 +37,7 @@ def get_users():
 
 
 # editor=1, author=0
-def add_user(username, password, name, level=0):
+def add_user(username, password, name, affiliation, level=0):
     if len(username) < MIN_USER_NAME_LEN:
         return {"error": f"Username must be at least "
                          f"{MIN_USER_NAME_LEN} characters long."}
@@ -49,10 +50,10 @@ def add_user(username, password, name, level=0):
 
     dbc.create(collection=USERS_COLLECT,
                doc={USERNAME: username, PASSWORD: password,
-                    LEVEL: level, NAME: name})
+                    LEVEL: level, NAME: name, AFFILIATION: affiliation})
     role_name = rls.AUTHOR_CODE if level == 0 else rls.ED_CODE
     try:
-        ppl.create(name=name, affiliation="",
+        ppl.create(name=name, affiliation=affiliation,
                    email=username, role=role_name)
     except ValueError as e:
         return {"error": str(e)}
@@ -68,14 +69,16 @@ def delete_user(username):
     return {"message": f"User '{username}' deleted successfully."}
 
 
-def update_user(username, password, level):
+def update_user(username, password, name, affiliation, level):
     if not exists(username):
         return {"error": "User not found."}
 
     dbc.update(collection=USERS_COLLECT, filters={USERNAME: username},
-               update_dict={LEVEL: level, password: password})
+               update_dict={LEVEL: level, PASSWORD: password,
+                            NAME: name, AFFILIATION: affiliation})
     return {"message": f"User '{username}' updated successfully.",
-            "user": {USERNAME: username, PASSWORD: password, LEVEL: level}}
+            "user": {USERNAME: username, PASSWORD: password,
+                     LEVEL: level, NAME: name, AFFILIATION: affiliation}}
 
 
 def verify_password(username, password):
