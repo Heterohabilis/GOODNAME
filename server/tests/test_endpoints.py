@@ -409,3 +409,45 @@ def test_developer_params():
     assert login_key in params_map
     assert 'username' in params_map[login_key]
     assert 'password' in params_map[login_key]
+
+
+# Registration endpoint tests
+from http import HTTPStatus
+
+@patch('data.users.add_user', autospec=True, return_value={'message': "User 'testuser' registered successfully.", 'user': {'username': 'testuser', 'name': 'Test User', 'role': 'author', 'level': 0}})
+def test_register_success(mock_add_user):
+    resp = TEST_CLIENT.post(ep.REGISTER_EP, json={
+        'username': 'testuser',
+        'password': 'securepass',
+        'name': 'Test User',
+        'role': 'author'
+    })
+    assert resp.status_code == HTTPStatus.CREATED
+    resp_json = resp.get_json()
+    assert 'message' in resp_json
+    assert resp_json['user']['username'] == 'testuser'
+    assert resp_json['user']['role'] == 'author'
+
+
+@patch('data.users.add_user', autospec=True, return_value={'error': 'User already exists.'})
+def test_register_user_exists(mock_add_user):
+    resp = TEST_CLIENT.post(ep.REGISTER_EP, json={
+        'username': 'existinguser',
+        'password': 'pass',
+        'name': 'Existing User',
+        'role': 'editor'
+    })
+    assert resp.status_code == HTTPStatus.BAD_REQUEST
+    resp_json = resp.get_json()
+    assert 'error' in resp_json
+
+
+def test_register_missing_username():
+    resp = TEST_CLIENT.post(ep.REGISTER_EP, json={
+        'password': 'pass',
+        'name': 'No Name',
+        'role': 'author'
+    })
+    assert resp.status_code == HTTPStatus.BAD_REQUEST
+    resp_json = resp.get_json()
+    assert resp_json['error'] == 'Username is required.'

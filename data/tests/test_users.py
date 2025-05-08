@@ -4,11 +4,12 @@ import data.users as us
 TEST_USERNAME = "test_user"
 TEST_PASSWORD = "test_password"
 TEST_LEVEL = 1
+TEST_NAME = 'test_name'
 
 
 @pytest.fixture(scope='function')
 def temp_user():
-    us.add_user(TEST_USERNAME, TEST_PASSWORD, TEST_LEVEL)
+    us.add_user(TEST_USERNAME, TEST_PASSWORD, TEST_NAME, TEST_LEVEL)
     yield TEST_USERNAME
     us.delete_user(TEST_USERNAME)
 
@@ -23,14 +24,14 @@ def test_not_exists():
 
 def test_add_user():
     us.delete_user(TEST_USERNAME)
-    result = us.add_user(TEST_USERNAME, TEST_LEVEL)
+    result = us.add_user(TEST_USERNAME, TEST_PASSWORD, TEST_NAME, TEST_LEVEL)
     assert "message" in result
     assert us.exists(TEST_USERNAME)
     us.delete_user(TEST_USERNAME)
 
 
 def test_add_user_duplicate(temp_user):
-    result = us.add_user(temp_user, TEST_LEVEL)
+    result = us.add_user(temp_user,  TEST_PASSWORD, TEST_NAME, TEST_LEVEL)
     assert "error" in result
 
 
