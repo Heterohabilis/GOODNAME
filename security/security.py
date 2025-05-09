@@ -1,5 +1,6 @@
 from functools import wraps
-import data.users as users
+import data.people as ppl
+import data.roles as rl
 import data.db_connect as dbc
 from data.db_connect import create, fetch_all_as_dict, SE_DB
 
@@ -151,11 +152,14 @@ def is_valid_key(user_id: str, login_key: str):
 
 
 def check_level_admin(user_id: str, **kwargs) -> bool:
-    all_users = users.get_users()
-    user = all_users.get(user_id)
-    if user and LEVEL in user:
-        return user[LEVEL] == IS_ADMIN
-    return False
+    user = ppl.read_one(user_id)
+    if user:
+        roles = user.get(ppl.ROLES, [])
+        if rl.AUTHOR_CODE in roles:
+            return False
+        return True
+    else:
+        return False
 
 
 def check_login(user_id: str, **kwargs):
