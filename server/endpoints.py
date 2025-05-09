@@ -495,20 +495,15 @@ class ManuUpdateState(Resource):
     def put(self, _id, user_id):
         try:
             action = request.json.get(qy.ACTION)
-            kwargs = {sec.LOGIN_KEY: 'any key for now'}
-            if not sec.is_permitted(sec.MANUSCRIPT, action, user_id,
-                                    **kwargs):
-                raise wz.Forbidden('This user does not have '
-                                   + 'authorization for this action.')
-            if action == qy.ASSIGN_REF or qy.DELETE_REF:
+            if action == qy.ASSIGN_REF or action == qy.DELETE_REF:
                 ref = request.json.get(qy.REFEREE)
                 ret = qy.update_state(_id, action, referee=ref)
             else:
                 ret = qy.update_state(_id, action)
 
         except Exception as err:
-            raise wz.NotAcceptable(f'Could not update state: '
-                                   f'{err=}')
+            raise wz.NotAcceptable(f'Could not update state: {err=}')
+
         return {
             MESSAGE: 'Manuscript state updated!',
             RETURN: ret,
