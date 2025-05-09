@@ -522,3 +522,51 @@ def test_check_admin_false(mock_check):
     resp_json = resp.get_json()
     assert resp_json['user_id'] == 'normal_user@nyu.edu'
     assert resp_json['is_admin'] is False
+
+
+from http import HTTPStatus
+from unittest.mock import patch
+
+@patch('data.manuscripts.query.read', autospec=True)
+def test_get_manuscripts_by_email_match(mock_read):
+    mock_read.return_value = [
+        {
+            "_id": "1",
+            "title": "Paper A",
+            "author": "Alice",
+            "author_email": "alice@nyu.edu",
+            "state": "SUB"
+        },
+        {
+            "_id": "2",
+            "title": "Paper B",
+            "author": "Bob",
+            "author_email": "bob@nyu.edu",
+            "state": "WIT"
+        }
+    ]
+
+    resp = TEST_CLIENT.get(f"{ep.MANU_EP}/by_email/alice@nyu.edu")
+    assert resp.status_code == HTTPStatus.OK
+    results = resp.get_json()
+    assert isinstance(results, list)
+    assert len(results) == 1
+    assert results[0]['author_email'] == "alice@nyu.edu"
+
+@patch('data.manuscripts.query.read', autospec=True)
+def test_get_manuscripts_by_email_no_match(mock_read):
+    mock_read.return_value = [
+        {
+            "_id": "1",
+            "title": "Paper A",
+            "author": "Alice",
+            "author_email": "alice@nyu.edu",
+            "state": "SUB"
+        }
+    ]
+
+    resp = TEST_CLIENT.get(f"{ep.MANU_EP}/by_email/unknown@nyu.edu")
+    assert resp.status_code == HTTPStatus.OK
+    results = resp.get_json()
+    assert isinstance(results, list)
+    assert len(results) == 0

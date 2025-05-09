@@ -781,3 +781,28 @@ class CheckAdmin(Resource):
             return {
                 "error": f"Failed to check admin status: {str(e)}"
             }, HTTPStatus.NOT_FOUND
+
+
+@api.route(f'{MANU_EP}/by_email/<target_email>')
+class ManuscriptsByEmail(Resource):
+    """
+    Get all manuscripts where author_email matches target_email.
+    """
+
+    @api.route(f'{MANU_EP}/by_email/<target_email>')
+    class ManuscriptsByEmail(Resource):
+        """
+        Get all manuscripts where author_email matches target_email.
+        """
+
+        def get(self, target_email):
+            try:
+                all_manuscripts = qy.read()
+                filtered = [
+                    m for m in all_manuscripts
+                    if m.get("author_email") == target_email
+                ]
+                return filtered, HTTPStatus.OK
+            except Exception as err:
+                return ({"error": f"Failed to filter manuscripts: {str(err)}"},
+                        HTTPStatus.INTERNAL_SERVER_ERROR)
