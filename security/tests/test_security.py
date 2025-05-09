@@ -1,23 +1,28 @@
 import pytest
-
 import security.security as sec
 import data.users as users
+import data.people as people
+from unittest.mock import patch
 
 
-def dummy_get_users():
-    return {
-        "tt33@we.pn": {
-            "username": "tt33@we.pn",
-            "level": 0
-        },
-        "xm2204@nyu.edu": {
-            "username": "xm2204@nyu.edu",
-            "level": 1
-        }
+# Dummy user records
+users.get_users = lambda: {
+    "tt33@we.pn": {
+        "username": "tt33@we.pn",
+        "level": 0
+    },
+    "xm2204@nyu.edu": {
+        "username": "xm2204@nyu.edu",
+        "level": 1
     }
+}
 
 
-users.get_users = dummy_get_users
+people.read_one = lambda email: None if email == "non-existent user" else {
+    "name": "Test",
+    "affiliation": "Dept",
+    "roles": ["ED"] if email == "xm2204@nyu.edu" else ["AU"]
+}
 
 
 def test_check_login_good():
@@ -50,7 +55,8 @@ def test_is_permitted_action_missing():
     assert sec.is_permitted(sec.PEOPLE, sec.PEOPLE_MISSING_ACTION, 'any user')
 
 
-def test_is_permitted_bad_user():
+@patch('data.people.read_one', return_value=None)
+def test_is_permitted_bad_user(mock_read):
     assert not sec.is_permitted(sec.PEOPLE, sec.CREATE, 'non-existent user')
 
 
