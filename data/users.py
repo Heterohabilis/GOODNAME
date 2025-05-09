@@ -2,8 +2,6 @@
 This module interfaces to our user data.
 """
 import data.db_connect as dbc
-import data.people as ppl
-import data.roles as rls
 
 LEVEL = 'level'
 MIN_USER_NAME_LEN = 2
@@ -51,12 +49,13 @@ def add_user(username, password, name, affiliation, level=0):
     dbc.create(collection=USERS_COLLECT,
                doc={USERNAME: username, PASSWORD: password,
                     LEVEL: level, NAME: name, AFFILIATION: affiliation})
-    role_name = rls.AUTHOR_CODE if level == 0 else rls.ED_CODE
+    """
     try:
         ppl.create(name=name, affiliation=affiliation,
                    email=username, role=role_name)
     except ValueError as e:
         return {"error": str(e)}
+    """
     return {"message": f"User '{username}' registered successfully.",
             "user": {"username": username, LEVEL: level}}
 
