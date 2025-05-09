@@ -760,3 +760,24 @@ class DevParams(Resource):
 
 
 api.add_namespace(developer_ns)
+
+
+@api.route('/check_admin/<user_id>')
+class CheckAdmin(Resource):
+    """
+    Check if a given user is an admin.
+    """
+
+    @api.response(HTTPStatus.OK, 'Success')
+    @api.response(HTTPStatus.NOT_FOUND, 'User not found')
+    def get(self, user_id):
+        try:
+            result = sec.check_level_admin(user_id)
+            return {
+                "user_id": user_id,
+                "is_admin": result
+            }, HTTPStatus.OK
+        except Exception as e:
+            return {
+                "error": f"Failed to check admin status: {str(e)}"
+            }, HTTPStatus.NOT_FOUND

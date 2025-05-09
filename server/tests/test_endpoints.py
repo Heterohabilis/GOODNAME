@@ -504,3 +504,21 @@ def test_update_user_error(mock_update_user):
         'level': 1
     })
     assert resp.status_code == NOT_ACCEPTABLE
+
+
+@patch('security.security.check_level_admin', autospec=True, return_value=True)
+def test_check_admin_true(mock_check):
+    resp = TEST_CLIENT.get('/check_admin/test_admin@nyu.edu')
+    assert resp.status_code == OK
+    resp_json = resp.get_json()
+    assert resp_json['user_id'] == 'test_admin@nyu.edu'
+    assert resp_json['is_admin'] is True
+
+
+@patch('security.security.check_level_admin', autospec=True, return_value=False)
+def test_check_admin_false(mock_check):
+    resp = TEST_CLIENT.get('/check_admin/normal_user@nyu.edu')
+    assert resp.status_code == OK
+    resp_json = resp.get_json()
+    assert resp_json['user_id'] == 'normal_user@nyu.edu'
+    assert resp_json['is_admin'] is False
