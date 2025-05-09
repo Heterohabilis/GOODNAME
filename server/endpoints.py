@@ -217,14 +217,9 @@ class PeopleCreate(Resource):
     @api.expect(PEOPLE_CREATE_FLDS)
     def put(self):
         user_id = request.args.get("user_id")
-        kwargs = {sec.LOGIN_KEY: 'any key for now'}
 
         if not user_id:
             raise wz.BadRequest('Missing user_id in query parameters.')
-
-        if not sec.is_permitted(sec.PEOPLE, sec.CREATE, user_id, **kwargs):
-            raise wz.Forbidden('This user does not have '
-                               'authorization to create people.')
 
         try:
             name = request.json.get(ppl.NAME)
